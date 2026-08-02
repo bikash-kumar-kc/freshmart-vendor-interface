@@ -11,7 +11,10 @@ api.interceptors.request.use((config) => {
 });
 
 let isRefreshing = false;
-let refreshQueue: Array<() => void> = [];
+let refreshQueue: Array<{
+  resolve: () => void;
+  reject: (error: unknown) => void;
+}> = [];
 
 // intercepting response to do refresh token request...
 api.interceptors.response.use(
@@ -23,8 +26,11 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
-        return new Promise((resolve) => {
-          refreshQueue.push(() => resolve(api(originalRequest)));
+        return new Promise((resolve, reject) => {
+          refreshQueue.push({
+            resolve: () => resolve(api(originalRequest)),
+            reject,
+          });
         });
       }
 
@@ -32,13 +38,14 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await api.post("/auth/refresh"); 
-        refreshQueue.forEach((cb) => cb());
+        await api.post("/auth/refresh");
+        refreshQueue.forEach(({ resolve }) => resolve());
         refreshQueue = [];
         return api(originalRequest);
       } catch (refreshError) {
         window.location.href = "/login";
-        return Promise.reject(refreshError);
+        refreshQueue.forEach(({ reject }) => reject(refreshError));
+        refreshQueue = [];
       } finally {
         isRefreshing = false;
       }
