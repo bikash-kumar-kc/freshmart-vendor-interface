@@ -12,9 +12,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CheckCircle2 } from "lucide-react";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 const VendorRegistration = () => {
   const [open, setOpen] = useState<boolean>(false);
+  const [verifyEmail, setVerifyEmail] = useState<boolean>(false);
 
   const {
     mutate: vendorApply,
@@ -80,8 +86,90 @@ const VendorRegistration = () => {
             </DialogDescription>
           </DialogHeader>
 
-          <Button className="w-full rounded-lg bg-green-600 transition-all duration-200 hover:bg-green-700 hover:shadow-md py-6 text-white tracking-wider">
+          <Button
+            className="w-full rounded-lg bg-green-600 transition-all duration-200 hover:bg-green-700 hover:shadow-md py-6 text-white tracking-wider"
+            onClick={() => {
+              setVerifyEmail(true);
+              setOpen(false);
+            }}
+          >
             Verify Email
+          </Button>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={verifyEmail} onOpenChange={setVerifyEmail}>
+        <DialogContent
+          className="
+      sm:max-w-md
+      rounded-lg
+      border-none
+      shadow-lg
+      transition-shadow
+      duration-200
+      hover:shadow-xl
+      p-8
+      [&_[data-slot='dialog-close']]:rounded-sm
+      [&_[data-slot='dialog-close']]:transition-colors
+      [&_[data-slot='dialog-close']:hover]:bg-red-50
+      [&_[data-slot='dialog-close']:hover]:text-red-500
+    "
+        >
+          <DialogHeader className="space-y-3">
+            <DialogTitle className="text-center text-2xl font-semibold tracking-wider text-gray-900">
+              Verify your email
+            </DialogTitle>
+
+            <DialogDescription className="text-center text-[12px] leading-6 tracking-wider text-muted-foreground">
+              Enter the 6-digit verification code sent to your email.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex justify-center py-4">
+            <InputOTP maxLength={6}>
+              <InputOTPGroup className="gap-2">
+                {[0, 1, 2, 3, 4, 5].map((index) => (
+                  <InputOTPSlot
+                    key={index}
+                    index={index}
+                    className="
+                h-12
+                w-12
+                rounded-md
+                border-green-200
+                bg-green-50
+                text-lg
+                font-semibold
+                text-green-700
+                transition-all
+                duration-200
+                
+                data-[active=true]:ring-2
+                data-[active=true]:ring-green-200
+              "
+                  />
+                ))}
+              </InputOTPGroup>
+            </InputOTP>
+          </div>
+
+          <Button
+            className="
+        h-12
+        w-full
+        rounded-lg
+        bg-green-600
+        text-base
+        font-medium
+        tracking-wide
+        text-white
+        transition-all
+        duration-200
+        hover:bg-green-700
+        hover:shadow-md
+      "
+          >
+            Verify OTP
           </Button>
         </DialogContent>
       </Dialog>
