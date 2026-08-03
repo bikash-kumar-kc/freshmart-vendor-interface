@@ -1,12 +1,11 @@
-
-import type { IAuthUser, ILoginPayload } from "@/types/auth/auth.type";
+import type { IAuthUser, IGetCurrentUserResponse, ILoginPayload, ILoginResponse } from "@/types/auth/auth.type";
 import { api } from "../axios";
 
 class AuthServices {
   create() {}
 
   async login(payload: ILoginPayload) {
-    const { data } = await api.post<{ user: IAuthUser }>(
+    const { data } = await api.post<ILoginResponse>(
       "/auth/login",
       payload,
     );
@@ -18,7 +17,7 @@ class AuthServices {
   }
 
   async refreshToken() {
-    const { data } = await api.post<{ user: IAuthUser }>("/auth/refresh");
+    const { data } = await api.post<IGetCurrentUserResponse>("/auth/refresh");
     return data;
   }
 
