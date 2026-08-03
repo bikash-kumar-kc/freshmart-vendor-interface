@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
-import ProtectedRoutes from "./protectedRoutes/ProtectedRoutes";
+import ProtectedRoutes from "./routes/ProtectedRoutes";
 import {
   DashBoard,
   Login,
@@ -14,11 +14,13 @@ import {
 } from "./pages";
 
 import { AuthLayout, UnAuthLayout } from "./layout";
+import PublicRoutes from "./routes/PublicRoutes";
+import Home from "./pages/home/Home";
 
 const authenticatedPages = [
   {
     component: <DashBoard />,
-    path: "/",
+    path: "/dashboard",
   },
   {
     component: <Notification />,
@@ -52,6 +54,7 @@ const unauthenticatedPages = [
 function App() {
   return (
     <Routes>
+      <Route index element={<Home />} />
       {authenticatedPages.map((i) => (
         <Route
           key={i.path}
@@ -69,30 +72,16 @@ function App() {
           key={i.path}
           path={i.path}
           element={
-            <ProtectedRoutes>
+            <PublicRoutes>
               <UnAuthLayout>{i.component}</UnAuthLayout>
-            </ProtectedRoutes>
+            </PublicRoutes>
           }
         />
       ))}
 
-      <Route
-        path={"/vendor-registration"}
-        element={
-          <ProtectedRoutes>
-            <VendorRegistration />
-          </ProtectedRoutes>
-        }
-      />
+      <Route path={"/vendor-registration"} element={<VendorRegistration />} />
 
-      <Route
-        path={"/verify-email"}
-        element={
-          <ProtectedRoutes>
-            <VerifyEmail />
-          </ProtectedRoutes>
-        }
-      />
+      <Route path={"/verify-email"} element={<VerifyEmail />} />
     </Routes>
   );
 }
