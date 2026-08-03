@@ -6,7 +6,7 @@ export interface IApplyVendorPayload {
   farmOwner: string;
   phoneNumber: string;
   addressLocation: string;
-  vatNumber?: string;
+  vatNumber: string;
   panVatCertificateUrl: string;
   certificates?: string[];
 }
