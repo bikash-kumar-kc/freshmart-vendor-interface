@@ -1,3 +1,4 @@
+import { toast } from "@/components/ui/toast";
 import { api } from "../axios";
 import Cookies from "js-cookie";
 
@@ -43,6 +44,11 @@ api.interceptors.response.use(
         refreshQueue = [];
         return api(originalRequest);
       } catch (refreshError) {
+        toast.add({
+          type: "error",
+          title: "Session expired",
+          description: "Please log in again.",
+        });
         window.location.href = "/login";
         refreshQueue.forEach(({ reject }) => reject(refreshError));
         refreshQueue = [];
