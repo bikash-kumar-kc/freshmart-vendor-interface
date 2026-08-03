@@ -19,6 +19,7 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
 
   const getCurrentUser = async () => {
     try {
+      setIsLoading(true);
       const response = await authServices.getCurrentUser();
       setUser({
         id: response.user.id,
@@ -33,6 +34,8 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const value = { user, isLoading, refetchUser: getCurrentUser };
+
   useEffect(() => {
     const token = Cookies.get("accessToken");
     if (!token) {
@@ -42,13 +45,7 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
     getCurrentUser();
   }, []);
 
-  return (
-    <AuthContext.Provider
-      value={{ user, isLoading, refetchUser: getCurrentUser }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuthContext() {
