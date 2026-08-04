@@ -2,28 +2,26 @@ import { FileText, UploadCloud, X } from "lucide-react";
 
 export function FileUploadBox({
   label,
-  file,
   previewUrl,
   onSelect,
   onRemove,
   accept = "application/pdf,image/*",
 }: {
   label: string;
-  file: File | null;
   previewUrl: string | null;
   onSelect: (file: File) => void;
   onRemove: () => void;
   accept?: string;
 }) {
-  if (file) {
+  if (previewUrl) {
     return (
       <div className="border border-slate-200 rounded-sm p-3">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2 min-w-0">
-            {previewUrl && file.type.startsWith("image/") ? (
+            {previewUrl ? (
               <img
                 src={previewUrl}
-                alt={file.name}
+                alt={"pan/vat certificate"}
                 className="w-14 h-14 object-cover rounded-sm border border-slate-200 shrink-0"
               />
             ) : (
@@ -31,7 +29,9 @@ export function FileUploadBox({
                 <FileText className="w-6 h-6 text-primary" />
               </div>
             )}
-            <span className="text-sm text-slate-700 truncate">{file.name}</span>
+            <span className="text-sm text-slate-700 truncate">
+              pan/vat certificate
+            </span>
           </div>
           <button
             type="button"
