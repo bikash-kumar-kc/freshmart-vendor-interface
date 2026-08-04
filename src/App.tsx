@@ -73,7 +73,9 @@ function App() {
           path={i.path}
           element={
             <PublicRoutes>
-              <UnAuthLayout>{i.component}</UnAuthLayout>
+              <UnAuthLayout>
+                {i.component}
+              </UnAuthLayout>
             </PublicRoutes>
           }
         />
