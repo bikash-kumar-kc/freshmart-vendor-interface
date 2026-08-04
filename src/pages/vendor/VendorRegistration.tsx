@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,19 +12,42 @@ import { SectionCard } from "@/components/reuseableComponents/SectionCard";
 import { Field } from "@/components/reuseableComponents/Field";
 import { getInputClass } from "@/lib/reuseablestyle/reuseablestyle";
 import { FileUploadBox } from "@/components/reuseableComponents/FileUpload";
+import imagekitservice from "@/api/imagekit/imagekit";
+import { upload } from "@imagekit/react";
+import { config } from "@/config/config";
+import { toast } from "@/components/ui/toast";
+
+interface IAuthParam {
+  token: string;
+  signature: string;
+  expire: string;
+}
 
 export default function VendorRegistrationPage() {
   const navigate = useNavigate();
-  const registerVendor = useVendorReigistration();
+  const {
+    mutate: vendorApply,
+    data: vendorReplyData,
+    isPending,
+  } = useVendorReigistration();
 
   const [activeField, setActiveField] = useState<string | null>(null);
+  const [authparams, setAuthParams] = useState<IAuthParam>();
 
-  const [panVatCertificate, setPanVatCertificate] = useState<File | null>(null);
-  const [panVatPreview, setPanVatPreview] = useState<string | null>(null);
+  const [panVatCertificate, setPanVatCertificate] = useState<Record<
+    string,
+    string
+  > | null>(null);
+  const [panVatPreview, setPanVatPreview] = useState<Record<
+    string,
+    string
+  > | null>(null);
 
-  const [certificates, setCertificates] = useState<File[]>([]);
+  const [certificates, setCertificates] = useState<Record<string, string>[]>(
+    [],
+  );
   const [certificatePreviews, setCertificatePreviews] = useState<
-    (string | null)[]
+    (Record<string, string> | null)[]
   >([]);
 
   const [submitted, setSubmitted] = useState<{ email: string } | null>(null);
@@ -37,42 +60,158 @@ export default function VendorRegistrationPage() {
     resolver: zodResolver(vendorRegistrationSchema),
   });
 
-  function handlePanVatSelect(file: File) {
-    setPanVatCertificate(file);
-    setPanVatPreview(
-      file.type.startsWith("image/") ? URL.createObjectURL(file) : null,
+  async function removeCertificate(fileId: string) {
+    await handleFileDelete(fileId);
+    setCertificates((prev) => prev.filter((f) => f.fileId !== fileId));
+    setCertificatePreviews((prev) =>
+      prev
+        ? prev.filter(
+            (f) => (f as { blob: string; fileId: string }).fileId !== fileId,
+          )
+        : prev,
     );
   }
 
-  function handleCertificateSelect(file: File) {
-    setCertificates((prev) => [...prev, file]);
-    setCertificatePreviews((prev) => [
-      ...prev,
-      file.type.startsWith("image/") ? URL.createObjectURL(file) : null,
-    ]);
-  }
+  const handleImagePreview = (
+    file: File,
+    type: "multiple" | "single",
+    fileId: string,
+  ) => {
+    if (type === "multiple" && file.type.startsWith("image/"))
+      setCertificatePreviews((prev) => [
+        ...prev,
+        {
+          blob: URL.createObjectURL(file),
+          fileId: fileId,
+        },
+      ]);
 
-  function removeCertificate(idx: number) {
-    setCertificates((prev) => prev.filter((_, i) => i !== idx));
-    setCertificatePreviews((prev) => prev.filter((_, i) => i !== idx));
-  }
+    if (type === "single" && file.type.startsWith("image/"))
+      setPanVatPreview({
+        blob: URL.createObjectURL(file),
+        fileId: fileId,
+      });
+  };
+
+  const handleUploadFiles = async (file: File, type: "multiple" | "single") => {
+    try {
+      if (!file) return;
+
+      // let auths: IAuthParam;
+
+      // if (!authparams) {
+      const response = await imagekitservice.generateAuthParams();
+
+      if (!response) {
+        throw new Error("Failed to get Imagekit auth params");
+      }
+
+      const authparams = response;
+
+      // setAuthParams(auths);
+      // }
+
+      const uploadOptions = {
+        file,
+        fileName: file.name,
+        token: authparams.token,
+        signature: authparams.signature,
+        expire: Number(authparams.expire),
+        publicKey: config.publicKey,
+      };
+
+      const res = await upload({ ...uploadOptions });
+      const imageUrl = res.url;
+      const fileId = res.fileId;
+
+      if (type === "multiple") handleImagePreview(file, "multiple", fileId!);
+
+      if (type === "single") handleImagePreview(file, "single", fileId!);
+
+      if (imageUrl && fileId && type === "multiple") {
+        setCertificates((prevs) => [
+          ...prevs,
+          {
+            url: imageUrl,
+            fileId: fileId,
+          },
+        ]);
+        return;
+      }
+
+      if (imageUrl && type === "single" && fileId) {
+        setPanVatCertificate({ url: imageUrl, fileId });
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.add({ type: "error", description: error.message });
+        return;
+      }
+      toast.add({ type: "error", description: "Failed to upload image" });
+    }
+  };
+
+  const handleFileDelete = async (fileId: string) => {
+    if (!fileId) {
+      toast.add({ type: "error", description: "File Id is required !" });
+      return;
+    }
+
+    try {
+      const response = await imagekitservice.deleteFile(fileId);
+      toast.add({ type: "success", description: "File deleted successfully" });
+    } catch {
+      console.log("Failed to delete file !");
+    }
+  };
+
+  const handleMultiplFileDelete = async (fileIds: string[]) => {
+    if (fileIds.length === 0) {
+      return;
+    }
+
+    try {
+      await imagekitservice.deleteFiles(fileIds);
+    } catch {
+      localStorage.setItem("ImageUrls", fileIds.join(","));
+    }
+  };
 
   async function onSubmit(values: VendorRegistrationFormValues) {
-    // const panVatCertificateUrl = panVatCertificate
-    //   ? await uploadToImageKit(panVatCertificate)
-    //   : "";
-    // const certificateUrls = await Promise.all(
-    //   certificates.map((file) => uploadToImageKit(file)),
-    // );
-    // const payload = {
-    //   ...values,
-    // panVatCertificateUrl,
-    // certificates: certificateUrls,
+    try {
+      const isPanVatExist = !!panVatCertificate;
+      if (!isPanVatExist) {
+        return;
+      }
+
+      vendorApply({
+        ...values,
+        panVatCertificateUrl: panVatCertificate.url,
+        certificates: certificates.map((c) => c.url) ?? undefined,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  // registerVendor.mutate(payload, {
-  //   onSuccess: () => setSubmitted({ email: values.email }),
-  // });
+  useEffect(() => {
+    if (vendorReplyData) {
+      setSubmitted({ email: vendorReplyData.email });
+    }
+    // return () => {
+    //   if (!submitted?.email) {
+    //     const fieldIds =
+    //       certificates.length > 0 ? certificates.map((c) => c.fieldId) : [];
+    //     if (panVatCertificate) fieldIds.push(panVatCertificate.fieldId);
+    //     handleMultiplFileDelete(fieldIds);
+    //   } else {
+    //     setPanVatCertificate(null);
+    //     setPanVatPreview(null);
+    //     setCertificatePreviews([]);
+    //     setCertificates([]);
+    //   }
+    // };
+  }, [vendorReplyData, certificates, panVatCertificate, submitted?.email]);
 
   return (
     <div className="min-h-screen bg-amber-50 text-slate-900 font-sans">
@@ -213,7 +352,6 @@ export default function VendorRegistrationPage() {
             </div>
           </SectionCard>
 
-          {/* Contact & tax */}
           <SectionCard
             step={2}
             title="Contact & tax details"
@@ -253,7 +391,6 @@ export default function VendorRegistrationPage() {
             </div>
           </SectionCard>
 
-          {/* Documents */}
           <SectionCard
             step={3}
             title="Verification documents"
@@ -267,10 +404,12 @@ export default function VendorRegistrationPage() {
                 </label>
                 <FileUploadBox
                   label="Upload PAN/VAT certificate (PDF or image)"
-                  file={panVatCertificate}
-                  previewUrl={panVatPreview}
-                  onSelect={handlePanVatSelect}
-                  onRemove={() => {
+                  previewUrl={panVatPreview ? panVatPreview.blob : ""}
+                  onSelect={(file: File) => handleUploadFiles(file, "single")}
+                  onRemove={async () => {
+                    await handleFileDelete(
+                      panVatPreview ? panVatPreview.fileId : "",
+                    );
                     setPanVatCertificate(null);
                     setPanVatPreview(null);
                   }}
@@ -282,7 +421,7 @@ export default function VendorRegistrationPage() {
                   Organic Certified Certificate
                 </label>
                 <div className="space-y-2">
-                  {certificates.map((file, idx) => (
+                  {certificates.map((f, idx) => (
                     <div
                       key={idx}
                       className="border border-slate-200 rounded-sm p-3"
@@ -291,8 +430,8 @@ export default function VendorRegistrationPage() {
                         <div className="flex items-center gap-2 min-w-0">
                           {certificatePreviews[idx] ? (
                             <img
-                              src={certificatePreviews[idx]!}
-                              alt={file.name}
+                              src={certificatePreviews[idx].blob!}
+                              alt={f.fieldId}
                               className="w-12 h-12 object-cover rounded-sm border border-slate-200 shrink-0"
                             />
                           ) : (
@@ -301,12 +440,12 @@ export default function VendorRegistrationPage() {
                             </div>
                           )}
                           <span className="text-sm text-slate-700 truncate">
-                            {file.name}
+                            {f.fieldId}
                           </span>
                         </div>
                         <button
                           type="button"
-                          onClick={() => removeCertificate(idx)}
+                          onClick={() => removeCertificate(f.fileId)}
                           className="text-slate-300 hover:text-rose-500 shrink-0"
                         >
                           <X className="w-4 h-4" />
@@ -324,7 +463,7 @@ export default function VendorRegistrationPage() {
                       className="hidden"
                       onChange={(e) => {
                         const f = e.target.files?.[0];
-                        if (f) handleCertificateSelect(f);
+                        if (f) handleUploadFiles(f, "multiple");
                         e.target.value = "";
                       }}
                     />
@@ -337,19 +476,28 @@ export default function VendorRegistrationPage() {
           <div className="flex items-center justify-end gap-3 pb-10">
             <button
               type="button"
-              onClick={() => navigate("/")}
+              onClick={() => {
+                if (!submitted?.email) {
+                  const fieldIds =
+                    certificates.length > 0
+                      ? certificates.map((c) => c.fieldId)
+                      : [];
+                  if (panVatCertificate)
+                    fieldIds.push(panVatCertificate.fieldId);
+                  handleMultiplFileDelete(fieldIds);
+                }
+                navigate("/");
+              }}
               className="px-8 py-2.5 rounded-sm text-sm font-medium text-white bg-red-500 hover:bg-red-700 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={registerVendor.isPending}
+              disabled={isPending}
               className="px-5 py-2.5 rounded-sm text-sm font-medium bg-green-500 text-white hover:bg-green-700 disabled:opacity-60 transition-colors"
             >
-              {registerVendor.isPending
-                ? "Submitting..."
-                : "Submit application"}
+              {isPending ? "Submitting..." : "Submit application"}
             </button>
           </div>
         </form>
