@@ -3,12 +3,20 @@ import type {
   IGetCurrentUserResponse,
   ILoginPayload,
   ILoginResponse,
+  ISetupAccountPayload,
+  ISetupAccountResponse,
 } from "@/types/auth/auth.type";
 import { api } from "../axios";
 import { toast } from "@/components/ui/toast";
 
 class AuthServices {
-  create() {}
+  async create(payload: ISetupAccountPayload) {
+    const { data } = await api.post<ISetupAccountResponse>(
+      "/auth/setup-account",
+      payload,
+    );
+    return data;
+  }
 
   async login(payload: ILoginPayload) {
     const { data } = await api.post<ILoginResponse>("/auth/login", payload);
@@ -38,7 +46,7 @@ class AuthServices {
       });
     }
 
-    console.log("data",data)
+    console.log("data", data);
     return await api.post("/vendor/otp/verify", { ...data });
   }
 
