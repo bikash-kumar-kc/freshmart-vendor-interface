@@ -1,13 +1,21 @@
 import * as z from "zod";
 
-export const vendorApplySchema = z.object({
-  email: z.email().nonempty(),
-  farmName: z.string().nonempty(),
-  farmOriginCountry: z.string().nonempty(),
-  farmDescription: z.string().nullable(),
-  farmOwner: z.string().nonempty(),
-  addressLocation: z.string().nonempty(),
-  vatNumber: z.string().nonempty(),
-  panVatCertificateUr: z.array(z.url()),
-  certificates: z.array(z.url()),
+export const vendorRegistrationSchema = z.object({
+  farmName: z.string().trim().min(1, "Farm name is required"),
+  farmOriginCountry: z.string().trim().min(1, "Origin country is required"),
+  farmDescription: z.string().trim().optional(),
+  farmOwner: z.string().trim().min(1, "Owner name is required"),
+  phoneNumber: z.string().trim().min(1, "Phone number is required"),
+  addressLocation: z.string().trim().min(1, "Address is required"),
+  email: z
+    .string()
+    .trim()
+    .min(1, "Email is required")
+    .email("Enter a valid email"),
+  vatNumber: z.string().trim().min(1, "VAT number is required"),
 });
+
+
+export type VendorRegistrationFormValues = z.infer<
+  typeof vendorRegistrationSchema
+>;
