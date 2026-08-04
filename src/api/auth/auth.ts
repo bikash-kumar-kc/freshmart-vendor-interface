@@ -1,14 +1,17 @@
-import type { IAuthUser, IGetCurrentUserResponse, ILoginPayload, ILoginResponse } from "@/types/auth/auth.type";
+import type {
+  IAuthUser,
+  IGetCurrentUserResponse,
+  ILoginPayload,
+  ILoginResponse,
+} from "@/types/auth/auth.type";
 import { api } from "../axios";
+import { toast } from "@/components/ui/toast";
 
 class AuthServices {
   create() {}
 
   async login(payload: ILoginPayload) {
-    const { data } = await api.post<ILoginResponse>(
-      "/auth/login",
-      payload,
-    );
+    const { data } = await api.post<ILoginResponse>("/auth/login", payload);
     return data;
   }
 
@@ -24,6 +27,33 @@ class AuthServices {
   async getCurrentUser() {
     const { data } = await api.get<{ user: IAuthUser }>("/auth");
     return data;
+  }
+
+  async verifyOtp(data: { email: string; otp: string }) {
+    if (!data.email || !data.otp) {
+      toast.add({
+        type: "error",
+        title: "Data missing",
+        description: "Email or otp is missing",
+      });
+    }
+
+    console.log("data",data)
+    return await api.post("/vendor/otp/verify", { ...data });
+  }
+
+  async resendOtp(data: { email: string }) {
+    if (!data.email) {
+      toast.add({
+        type: "error",
+        title: "Data missing",
+        description: "Email or otp is missing",
+      });
+    }
+
+    return await api.post("/vendor/otp/resend", {
+      ...data,
+    });
   }
 }
 
