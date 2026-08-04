@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,26 +17,9 @@ import { upload } from "@imagekit/react";
 import { config } from "@/config/config";
 import { toast } from "@/components/ui/toast";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
-import authServices from "@/api/auth/auth";
-import axios from "axios";
-
-interface IAuthParam {
-  token: string;
-  signature: string;
-  expire: string;
-}
+  RegistrationSuccessDialog,
+  VerifyEmailDialog,
+} from "./RegistrationSuccessDialog";
 
 export default function VendorRegistrationPage() {
   const navigate = useNavigate();
@@ -46,15 +29,10 @@ export default function VendorRegistrationPage() {
     isPending,
   } = useVendorReigistration();
 
-  const [otp, setOtp] = useState("");
-
-  const [count, setCount] = useState<number>(0);
-
   const [open, setOpen] = useState<boolean>(false);
   const [verifyEmail, setVerifyEmail] = useState<boolean>(false);
 
   const [activeField, setActiveField] = useState<string | null>(null);
-  const [authparams, setAuthParams] = useState<IAuthParam>();
 
   const [panVatCertificate, setPanVatCertificate] = useState<Record<
     string,
@@ -120,9 +98,6 @@ export default function VendorRegistrationPage() {
     try {
       if (!file) return;
 
-      // let auths: IAuthParam;
-
-      // if (!authparams) {
       const response = await imagekitservice.generateAuthParams();
 
       if (!response) {
@@ -130,9 +105,6 @@ export default function VendorRegistrationPage() {
       }
 
       const authparams = response;
-
-      // setAuthParams(auths);
-      // }
 
       const uploadOptions = {
         file,
@@ -229,38 +201,11 @@ export default function VendorRegistrationPage() {
     }
   }
 
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [openResend, setOpenResend] = useState(false);
-  const handleTimer = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    timerRef.current = setTimeout(() => {
-      setOpenResend(true);
-    }, 1000);
-  };
-
-  const [rateLimit, setRateLimit] = useState(false);
-
   useEffect(() => {
     if (vendorReplyData) {
       setSubmitted({ email: vendorReplyData.email });
       setOpen(true);
     }
-    // return () => {
-    //   if (!submitted?.email) {
-    //     const fieldIds =
-    //       certificates.length > 0 ? certificates.map((c) => c.fieldId) : [];
-    //     if (panVatCertificate) fieldIds.push(panVatCertificate.fieldId);
-    //     handleMultiplFileDelete(fieldIds);
-    //   } else {
-    //     setPanVatCertificate(null);
-    //     setPanVatPreview(null);
-    //     setCertificatePreviews([]);
-    //     setCertificates([]);
-    //   }
-    // };
   }, [vendorReplyData, certificates, panVatCertificate, submitted?.email]);
 
   return (
@@ -553,219 +498,20 @@ export default function VendorRegistrationPage() {
         </form>
       </div>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent
-          className="
-          sm:max-w-md
-    rounded-lg
-    border-green-200
-    [&_[data-slot='dialog-close']]:transition-colors
-    [&_[data-slot='dialog-close']]:rounded-sm
-    [&_[data-slot='dialog-close']:hover]:bg-red-50
-    [&_[data-slot='dialog-close']:hover]:text-red-500
-    border-none
-    shadow-lg
-    transition-shadow duration-200
-    hover:shadow-xl
-    "
-        >
-          <DialogHeader>
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center  rounded-full">
-              <CheckCircle2 className="h-8 w-8 text-green-600" />
-            </div>
+      <RegistrationSuccessDialog
+        open={open}
+        setOpen={setOpen}
+        onVerifyClick={() => {
+          setVerifyEmail(true);
+          setOpen(false);
+        }}
+      />
 
-            {/* <DialogTitle className="text-center text-2xl font-bold text-green-700">
-              Registration Successful
-            </DialogTitle> */}
-
-            <DialogDescription className="mt-1 mb-3 text-center text-gray-500 leading-relaxed text-[13px]">
-              Your vendor application has been successfully registered.
-              <br />
-              An OTP has been sent to your email for verification.
-            </DialogDescription>
-          </DialogHeader>
-
-          <Button
-            className="w-full rounded-lg bg-green-600 transition-all duration-200 hover:bg-green-700 hover:shadow-md py-6 text-white tracking-wider"
-            onClick={() => {
-              setVerifyEmail(true);
-              setOpen(false);
-            }}
-          >
-            Verify Email
-          </Button>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={verifyEmail} onOpenChange={setVerifyEmail}>
-        <DialogContent
-          className="
-      sm:max-w-md
-      rounded-lg
-      border-none
-      shadow-lg
-      transition-shadow
-      duration-200
-      hover:shadow-xl
-      p-8
-      [&_[data-slot='dialog-close']]:rounded-sm
-      [&_[data-slot='dialog-close']]:transition-colors
-      [&_[data-slot='dialog-close']:hover]:bg-red-50
-      [&_[data-slot='dialog-close']:hover]:text-red-500
-    "
-        >
-          <DialogHeader className="space-y-3">
-            <DialogTitle className="text-center text-2xl font-semibold tracking-wider text-gray-900">
-              Verify your email
-            </DialogTitle>
-
-            <DialogDescription className="text-center text-[12px] leading-6 tracking-wider text-muted-foreground">
-              Enter the 6-digit verification code sent to your email.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="flex justify-center py-4">
-            <InputOTP
-              maxLength={6}
-              value={otp}
-              onChange={(value) => setOtp(value)}
-            >
-              <InputOTPGroup className="gap-2">
-                {[0, 1, 2, 3, 4, 5].map((index) => (
-                  <InputOTPSlot
-                    key={index}
-                    index={index}
-                    className="
-                h-12
-                w-12
-                rounded-md
-                border-green-200
-                bg-green-50
-                text-lg
-                font-semibold
-                text-green-700
-                transition-all
-                duration-200
-                
-                data-[active=true]:ring-2
-                data-[active=true]:ring-green-200
-              "
-                  />
-                ))}
-              </InputOTPGroup>
-            </InputOTP>
-          </div>
-
-          <Button
-            className="
-        h-12
-        w-full
-        rounded-lg
-        bg-green-600
-        text-base
-        font-medium
-        tracking-wide
-        text-white
-        transition-all
-        duration-200
-        hover:bg-green-700
-        hover:shadow-md
-      "
-            disabled={rateLimit}
-            onClick={async () => {
-              if (!otp || !submitted?.email) return;
-              console.log("sfisjdoiffffffff");
-              try {
-                await authServices.verifyOtp({
-                  email: submitted.email,
-                  otp,
-                });
-
-                setVerifyEmail(false)
-
-                toast.add({
-                  type: "success",
-                  title: "Email Verify",
-                  description: "Your email is verified successfully ",
-                });
-              } catch (error) {
-                console.log(error);
-                if (axios.isAxiosError(error)) {
-                  const { status } = error.response;
-                  console.log("status", status);
-
-                  if (status === 400) {
-                    handleTimer();
-                    setOtp("");
-                    toast.add({ type: "error", title: "otp not matched" });
-                  }
-
-                  if (status === 429) {
-                    setRateLimit(true);
-                    toast.add({
-                      type: "error",
-                      title: "rate limit hit",
-                      description:
-                        "you have to wait for some minute beforing trying !",
-                    });
-                  }
-                }
-              }
-            }}
-          >
-            Verify OTP
-          </Button>
-
-          {openResend && (
-            <Button
-              className="
-        h-12
-        w-full
-        rounded-lg
-        bg-green-600
-        text-base
-        font-medium
-        tracking-wide
-        text-white
-        transition-all
-        duration-200
-        hover:bg-green-700
-        hover:shadow-md
-      "
-              disabled={!openResend}
-              onClick={async () => {
-                try {
-                  if (!submitted?.email) {
-                    console.log("No email");
-                    return;
-                  }
-                  await authServices.resendOtp({ email: submitted.email });
-                } catch (error) {
-                  if (axios.isAxiosError(error)) {
-                    if (error.response?.status === 429) {
-                      setRateLimit(true);
-                      toast.add({
-                        type: "error",
-                        title: "rate limit hit",
-                        description:
-                          "you have to wait for some minute beforing trying !",
-                      });
-                    }
-                    return;
-                  }
-
-                  toast.add({
-                    type: "error",
-                    description: "Failed to generate otp",
-                  });
-                }
-              }}
-            >
-              resend otp
-            </Button>
-          )}
-        </DialogContent>
-      </Dialog>
+      <VerifyEmailDialog
+        verifyEmail={verifyEmail}
+        setVerifyEmail={setVerifyEmail}
+        submitted={submitted}
+      />
     </div>
   );
 }
