@@ -11,6 +11,7 @@ interface AuthContextValue {
   user: IAuthUser | null;
   isLoading: boolean;
   refetchUser: (data: IAuthUser) => void;
+  setUser: (data:null) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -39,18 +40,17 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
   const value = {
     user,
     isLoading,
+    setUser: setUser,
     refetchUser: handleSetUser,
   };
 
   useEffect(() => {
     const token = Cookies.get("accessToken");
     if (!token) {
-
       setIsLoading(false);
       return;
     }
     getCurrentUser();
-
   }, [location.pathname]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
