@@ -9,6 +9,7 @@ interface IImageKitType {
 }
 
 class ImagekitServices {
+  // imagekit auth params...
   async generateAuthParams() {
     try {
       const response = await api.get<IImageKitType>("/imagekit");
@@ -24,10 +25,9 @@ class ImagekitServices {
     }
   }
 
+  // delete file...
   async deleteFile(fileId: string) {
-  
     if (!fileId) return;
-
     try {
       await api.delete(`/imagekit/${fileId}`);
     } catch (error) {
@@ -42,6 +42,7 @@ class ImagekitServices {
     }
   }
 
+  // delete multiple files...
   async deleteFiles(fileIds: string[]) {
     if (!fileIds || fileIds.length === 0) return;
 
@@ -56,7 +57,6 @@ class ImagekitServices {
         toast.add({ type: "error", description: error.message });
         return;
       }
-
       toast.add({ type: "error", description: "Failed to delete images" });
     }
   }
