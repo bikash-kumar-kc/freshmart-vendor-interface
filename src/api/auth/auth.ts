@@ -10,6 +10,9 @@ import { api } from "../axios";
 import { toast } from "@/components/ui/toast";
 
 class AuthServices {
+
+
+  // vendor register/apply.......
   async create(payload: ISetupAccountPayload) {
     const { data } = await api.post<ISetupAccountResponse>(
       "/auth/setup-account",
@@ -18,25 +21,31 @@ class AuthServices {
     return data;
   }
 
+  // vendor login...
   async login(payload: ILoginPayload) {
     const { data } = await api.post<ILoginResponse>("/auth/login", payload);
     return data;
   }
 
+  // vendor logout...
   async logout() {
     await api.post("/auth/logout");
   }
 
+  // vendor use refreshtoken...
   async refreshToken() {
     const { data } = await api.post<IGetCurrentUserResponse>("/auth/refresh");
     return data;
   }
 
+  // vendor get itself...
   async getCurrentUser() {
     const { data } = await api.get<{ user: IAuthUser }>("/auth");
     return data;
   }
 
+
+ // vendor verify otp...
   async verifyOtp(data: { email: string; otp: string }) {
     if (!data.email || !data.otp) {
       toast.add({
@@ -45,11 +54,10 @@ class AuthServices {
         description: "Email or otp is missing",
       });
     }
-
-    console.log("data", data);
     return await api.post("/vendor/otp/verify", { ...data });
   }
 
+  // vendor ask for otp again...
   async resendOtp(data: { email: string }) {
     if (!data.email) {
       toast.add({
