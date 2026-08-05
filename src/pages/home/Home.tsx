@@ -101,6 +101,7 @@ export default function Home() {
               </motion.button>
             </Link>
 
+            <Link to="/dashboard">
             <motion.button
               whileHover={{
                 scale: 1.05,
@@ -108,10 +109,11 @@ export default function Home() {
               whileTap={{
                 scale: 0.97,
               }}
-              className="rounded-md border border-white/30 bg-white/10 px-8 py-3 text-base font-medium text-white backdrop-blur-sm hover:bg-white/20"
+              className="rounded-md bg-blue-600 px-8 py-3 text-base font-medium text-white backdrop-blur-sm hover:bg-blue-700"
             >
-              Learn More
+              View Dashboard
             </motion.button>
+            </Link>
           </motion.div>
         </motion.div>
       </section>
