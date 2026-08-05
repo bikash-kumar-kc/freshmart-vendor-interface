@@ -15,14 +15,14 @@ import "@fontsource/manrope/700.css";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary>
-      <AuthContextProvider>
-        <QueryClientProviderJsx>
-          <BrowserRouterProvider>
+      <BrowserRouterProvider>
+        <AuthContextProvider>
+          <QueryClientProviderJsx>
             <App />
             <Toaster />
-          </BrowserRouterProvider>
-        </QueryClientProviderJsx>
-      </AuthContextProvider>
+          </QueryClientProviderJsx>
+        </AuthContextProvider>
+      </BrowserRouterProvider>
     </ErrorBoundary>
   </StrictMode>,
 );
