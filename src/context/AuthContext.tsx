@@ -1,9 +1,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import Cookies from "js-cookie";
 import { toast } from "@/components/ui/toast";
 import type { ReactNode } from "react";
 import type { IAuthUser } from "@/types/auth/auth.type";
 import authServices from "@/api/auth/auth";
+import "../api/interceptors/interceptor";
+import { useLocation } from "react-router-dom";
+import Cookies from "js-cookie";
 
 interface AuthContextValue {
   user: IAuthUser | null;
@@ -16,19 +18,18 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export function AuthContextProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<IAuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
 
   const getCurrentUser = async () => {
     try {
-      setIsLoading(true);
       const response = await authServices.getCurrentUser();
       setUser({
         id: response.user.id,
         role: response.user.role,
         email: response.user.email,
       });
-    } catch (error) {
+    } catch {
       toast.add({ type: "error", description: "User is not logged in !" });
-      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -44,11 +45,13 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = Cookies.get("accessToken");
     if (!token) {
+
       setIsLoading(false);
       return;
     }
     getCurrentUser();
-  }, []);
+
+  }, [location.pathname]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
