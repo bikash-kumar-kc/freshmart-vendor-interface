@@ -11,6 +11,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// variable to control race condition...
 let isRefreshing = false;
 let refreshQueue: Array<{
   resolve: () => void;
