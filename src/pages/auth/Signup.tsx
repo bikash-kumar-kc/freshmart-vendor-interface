@@ -83,7 +83,7 @@ const Signup = () => {
       reset()
       navigate("/dashboard");
     }
-  }, [response, navigate, refetchUser]);
+  }, [response, navigate, refetchUser,reset]);
 
   return (
     <>
