@@ -1,5 +1,3 @@
-
-
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -59,7 +57,7 @@ function NavItem({
 
 export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
   const location = useLocation();
-  const { user, setUser } = useAuthContext();
+  const { user, setUser,refetchUser } = useAuthContext();
   const navigate = useNavigate();
 
   const isOnOrdersRoute = location.pathname.startsWith("/order");
@@ -70,8 +68,12 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
     try {
       void authServices.logout();
       setUser(null);
-
       navigate("/");
+      toast.add({
+        type: "success",
+        title: "Logout",
+        description: "Logout successfully",
+      });
     } catch {
       toast.add({
         type: "error",
@@ -83,7 +85,6 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
 
   return (
     <aside className="flex h-screen w-[15%] fixed flex-col justify-between border-r border-gray-100 shadow-lg bg-white px-4 py-5">
-      
       <div>
         {/* Brand */}
         <div className="mb-8 flex items-center gap-3 px-2 w-full ">
@@ -98,7 +99,6 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
           </div>
         </div>
 
-        
         <nav className="space-y-1">
           <NavItem to="/dashboard" icon={LayoutDashboard} label="Dashboard" />
 
@@ -137,7 +137,6 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
         </nav>
       </div>
 
-    
       <div>
         <div className="mb-4 space-y-1">
           <NavItem
@@ -157,7 +156,6 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
           </button>
         </div>
 
-        
         <div className="flex items-center justify-between gap-3 rounded-md border-2 border-gray-100 px-3 py-2.5">
           <div className="flex min-w-0 items-center gap-2.5">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-green-100 text-sm font-semibold text-green-700">
