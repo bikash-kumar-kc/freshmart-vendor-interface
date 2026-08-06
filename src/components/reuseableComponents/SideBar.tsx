@@ -57,7 +57,7 @@ function NavItem({
 
 export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
   const location = useLocation();
-  const { user, setUser,refetchUser } = useAuthContext();
+  const { user, setUser } = useAuthContext();
   const navigate = useNavigate();
 
   const isOnOrdersRoute = location.pathname.startsWith("/order");
@@ -66,14 +66,14 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
 
   const handleLogout = async () => {
     try {
-      void authServices.logout();
+      await authServices.logout();
       setUser(null);
-      navigate("/");
       toast.add({
         type: "success",
         title: "Logout",
         description: "Logout successfully",
       });
+      navigate("/");
     } catch {
       toast.add({
         type: "error",
