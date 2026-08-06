@@ -99,7 +99,7 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
           </div>
         </div>
 
-        <nav className="space-y-1">
+        <nav className="space-y-1 mt-10">
           <NavItem to="/dashboard" icon={LayoutDashboard} label="Dashboard" />
 
           <NavItem to="/product" icon={Package} label="Products" />
@@ -108,7 +108,26 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
 
           {/* Orders */}
           <div>
-            <button
+            <NavLink
+              to={"/order"}
+              // end={"/order" === "/"}
+              className={({ isActive }) =>
+                `${navItemBase} ${isActive ? navItemActive : navItemInactive}`
+              }
+              onClick={() => setOrdersOpen((prev) => !prev)}
+            >
+              <ShoppingBag size={18} />
+
+              <span className="flex-1 text-left">Orders</span>
+
+              <ChevronDown
+                size={16}
+                className={`transition-transform duration-200 ${
+                  ordersOpen ? "rotate-180" : ""
+                }`}
+              />
+            </NavLink>
+            {/* <button
               onClick={() => setOrdersOpen((prev) => !prev)}
               className={`${navItemBase} w-full ${
                 isOnOrdersRoute ? "bg-green-50 text-green-700" : navItemInactive
@@ -124,7 +143,7 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
                   ordersOpen ? "rotate-180" : ""
                 }`}
               />
-            </button>
+            </button> */}
 
             {ordersOpen && (
               <div className="mt-1 ml-4 space-y-1 border-l border-gray-200 pl-3">
