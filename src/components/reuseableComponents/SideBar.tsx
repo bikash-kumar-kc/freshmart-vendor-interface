@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Package,
@@ -88,15 +88,17 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
       <div>
         {/* Brand */}
         <div className="mb-8 flex items-center gap-3 px-2 w-full ">
-          <div>
-            <h2 className="text-xl font-semibold tracking-wider text-gray-900">
-              🌿 FreshMart
-            </h2>
+          <Link to="/dashboard">
+            <div>
+              <h2 className="text-xl font-semibold tracking-wider text-gray-900">
+                🌿 FreshMart
+              </h2>
 
-            <p className="text-sm tracking-wider text-gray-700 text-center">
-              Vendor Portal
-            </p>
-          </div>
+              <p className="text-sm tracking-wider text-gray-700 text-center">
+                Vendor Portal
+              </p>
+            </div>
+          </Link>
         </div>
 
         <nav className="space-y-1 mt-10">
