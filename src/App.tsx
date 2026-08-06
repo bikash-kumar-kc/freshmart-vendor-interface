@@ -3,6 +3,8 @@ import "./App.css";
 import ProtectedRoutes from "./routes/ProtectedRoutes";
 import {
   DashBoard,
+  Display,
+  Inventory,
   Login,
   Notification,
   Order,
@@ -37,6 +39,14 @@ const authenticatedPages = [
   {
     component: <Quotation />,
     path: "/quotation",
+  },
+  {
+    component: <Inventory />,
+    path: "order/inventory",
+  },
+  {
+    component: <Display />,
+    path: "/order/display",
   },
 ];
 
@@ -73,9 +83,7 @@ function App() {
           path={i.path}
           element={
             <PublicRoutes>
-              <UnAuthLayout>
-                {i.component}
-              </UnAuthLayout>
+              <UnAuthLayout>{i.component}</UnAuthLayout>
             </PublicRoutes>
           }
         />
