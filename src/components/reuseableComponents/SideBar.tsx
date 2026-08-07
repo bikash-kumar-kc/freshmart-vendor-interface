@@ -15,6 +15,7 @@ import {
 import { useAuthContext } from "@/context/AuthContext";
 import authServices from "@/api/auth/auth";
 import { toast } from "../ui/toast";
+import Cookies from "js-cookie";
 
 const navItemBase =
   "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium transition-all duration-200";
@@ -66,6 +67,8 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
 
   const handleLogout = async () => {
     try {
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
       await authServices.logout();
       setUser(null);
       toast.add({

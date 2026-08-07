@@ -1,0 +1,111 @@
+// src/features/dashboard/dashboard.mock.ts
+// Temporary — replace with real API data once /vendor/stats/dashboard
+// and /notifications/vendor/latest are wired up.
+
+import type { IDashboardStats, INotification } from "./notification.types";
+
+
+
+const hoursAgo = (h: number) =>
+  new Date(Date.now() - h * 60 * 60 * 1000).toISOString();
+
+export const mockStats: IDashboardStats = {
+  totalProducts: 24,
+  liveProducts: 17,
+  pendingQuotations: 3,
+  activeDisplayOrders: 5,
+};
+
+export const mockNotifications: INotification[] = [
+  {
+    id: 1,
+    type: 'vendor',
+    subType: 'vendor_account_created',
+    vendorId: '37c64c57-e422-4eee-a208-386249571d64',
+    referenceId: null,
+    referenceType: null,
+    message: 'Your vendor account has been created successfully.',
+    content: null,
+    isRead: false,
+    readAt: null,
+    createdAt: hoursAgo(23),
+  },
+  {
+    id: 2,
+    type: 'vendor',
+    subType: 'admin_filed_quotation',
+    vendorId: '37c64c57-e422-4eee-a208-386249571d64',
+    referenceId: '12',
+    referenceType: 'quotation',
+    message: 'A new quotation has been sent for your review.',
+    content: 'Organic Tomatoes — 3 variants proposed',
+    isRead: false,
+    readAt: null,
+    createdAt: hoursAgo(18),
+  },
+  {
+    id: 3,
+    type: 'vendor',
+    subType: 'product_approved',
+    vendorId: '37c64c57-e422-4eee-a208-386249571d64',
+    referenceId: '45',
+    referenceType: 'product_listing',
+    message: 'Your product listing has been approved.',
+    content: 'Fresh Spinach (500g) is now eligible to go live.',
+    isRead: true,
+    readAt: hoursAgo(9),
+    createdAt: hoursAgo(12),
+  },
+  {
+    id: 4,
+    type: 'vendor',
+    subType: 'product_rejected',
+    vendorId: '37c64c57-e422-4eee-a208-386249571d64',
+    referenceId: '46',
+    referenceType: 'product_listing',
+    message: 'Your product listing was rejected.',
+    content: 'Image quality did not meet the listing guidelines.',
+    isRead: false,
+    readAt: null,
+    createdAt: hoursAgo(8),
+  },
+  {
+    id: 5,
+    type: 'vendor',
+    subType: 'display_order_request',
+    vendorId: '37c64c57-e422-4eee-a208-386249571d64',
+    referenceId: '78',
+    referenceType: 'display_order',
+    message: 'You have a new Display order request.',
+    content: 'Respond within 1 hour to avoid auto-completion.',
+    isRead: false,
+    readAt: null,
+    createdAt: hoursAgo(3),
+  },
+  {
+    id: 6,
+    type: 'vendor',
+    subType: 'quotation_deleted',
+    vendorId: '37c64c57-e422-4eee-a208-386249571d64',
+    referenceId: '11',
+    referenceType: 'quotation',
+    message: 'A quotation was deleted by admin.',
+    content: null,
+    isRead: false,
+    readAt: null,
+    createdAt: hoursAgo(1),
+  },
+  {
+    id: 7,
+    type: 'vendor',
+    subType: 'vendor_replied_quotation',
+    vendorId: '37c64c57-e422-4eee-a208-386249571d64',
+    referenceId: '12',
+    referenceType: 'quotation',
+    message: 'You countered a quotation offer.',
+    content: 'Waiting on admin re-approval.',
+    isRead: true,
+    readAt: hoursAgo(5),
+    createdAt: hoursAgo(6),
+  },
+];
