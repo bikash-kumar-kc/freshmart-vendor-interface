@@ -1,4 +1,9 @@
-export type DisplayOrderStatus = "pending" | "processing" | "delivered" | "cancelled";
+
+export type DisplayOrderStatus =
+  | "pending"
+  | "processing"
+  | "delivered"
+  | "cancelled";
 
 export interface IOrderItem {
   id: number;
@@ -23,8 +28,18 @@ export interface IOrder {
   orderItems?: IOrderItem[];
 }
 
-
-
+export interface IOrderDisplayType {
+  orderId: string;
+  userId: string;
+  productName: string;
+  productId: string;
+  variantsId: string;
+  weightUnit: string;
+  weightValue: number;
+  DisplayOrderStatus: DisplayOrderStatus;
+  type: "inventory" | "display";
+  isPayment: boolean;
+}
 
 // Vendor — GET /display-order?status=...
 export interface IListDisplayOrdersQuery {
