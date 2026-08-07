@@ -1,8 +1,9 @@
 import { Clock, X} from "lucide-react";
 import { Link } from "react-router-dom";
-import type { INotification } from "../pages/dashboard/notification.types";
+
 import { getReferenceRoute, notificationMeta } from "../types/notification/notification.meta";
 import { formatDistanceToNow } from "date-fns";
+import type { INotification } from "@/types/notification/notification.type";
 
 interface NotificationCardProps {
   notification: INotification;
