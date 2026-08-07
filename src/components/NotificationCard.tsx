@@ -1,6 +1,5 @@
 import { Clock, X} from "lucide-react";
 import { Link } from "react-router-dom";
-
 import { getReferenceRoute, notificationMeta } from "../types/notification/notification.meta";
 import { formatDistanceToNow } from "date-fns";
 import type { INotification } from "@/types/notification/notification.type";
