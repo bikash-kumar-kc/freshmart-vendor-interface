@@ -11,11 +11,19 @@ import {
   Bell,
   LogOut,
   MoreHorizontal,
+  MoreVertical,
+  User,
 } from "lucide-react";
 import { useAuthContext } from "@/context/AuthContext";
 import authServices from "@/api/auth/auth";
 import { toast } from "../ui/toast";
 import Cookies from "js-cookie";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 const navItemBase =
   "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium transition-all duration-200";
@@ -195,9 +203,19 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
             </div>
           </div>
 
-          <button className="rounded-md p-1 transition-colors hover:bg-gray-100">
-            <MoreHorizontal size={18} className="text-gray-400" />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-1 rounded-sm hover:bg-primary/10">
+                <MoreVertical className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="rounded-sm bg-amber-50">
+              <DropdownMenuItem onClick={() => navigate("/profile")}>
+                <User className="w-4 h-4 mr-2" />
+                View Profile
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </aside>
