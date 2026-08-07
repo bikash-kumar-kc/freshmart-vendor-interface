@@ -18,6 +18,7 @@ import {
 import { AuthLayout, UnAuthLayout } from "./layout";
 import PublicRoutes from "./routes/PublicRoutes";
 import Home from "./pages/home/Home";
+import Profile from "./pages/profile/Profile";
 
 const authenticatedPages = [
   {
@@ -47,6 +48,10 @@ const authenticatedPages = [
   {
     component: <Display />,
     path: "/order/display",
+  },
+  {
+    component: <Profile />,
+    path: "/profile",
   },
 ];
 
