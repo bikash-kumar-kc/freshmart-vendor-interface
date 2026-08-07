@@ -1,4 +1,4 @@
-import { Clock, X, Circle } from "lucide-react";
+import { Clock, X} from "lucide-react";
 import { Link } from "react-router-dom";
 import type { INotification } from "./notification.types";
 import { getReferenceRoute, notificationMeta } from "./notification.meta";
@@ -25,7 +25,8 @@ export default function NotificationCard({
 
   return (
     <div
-      className={`rounded-sm px-4 py-3.5 flex items-start gap-3 border transition-colors ${isRead ? "bg-slate-50 border-slate-100" : "bg-white border-slate-200"}`}
+      className={`rounded-lg px-4 py-3.5 flex items-start gap-3 border shadow-sm transition-colors ${isRead ? "bg-slate-50 border-slate-100" : "bg-white border-slate-200"} transition-transform duration-300 ease-in-out hover:scale-102`}
+      onClick={() => onToggleRead(notification.id, !isRead)}
     >
       <div
         className="w-8 h-8 rounded-sm flex items-center justify-center shrink-0"
@@ -51,7 +52,7 @@ export default function NotificationCard({
           </div>
           <button
             onClick={() => onRemove(notification.id)}
-            className="text-slate-300 hover:text-slate-500 shrink-0"
+            className="text-slate-300 hover:text-red-500 shrink-0"
             aria-label="Remove notification"
           >
             <X className="w-4 h-4" />
@@ -59,7 +60,7 @@ export default function NotificationCard({
         </div>
 
         {notification.content && (
-          <p className="text-sm text-slate-500 mt-0.5 truncate">
+          <p className="text-[10px] text-slate-500 mt-0.5 truncate tracking-wide">
             {notification.content}
           </p>
         )}
@@ -68,20 +69,12 @@ export default function NotificationCard({
           {viewRoute && (
             <Link
               to={viewRoute}
-              className="text-xs font-medium text-primary hover:text-primary/80"
+              className="text-xs font-medium px-2 py-1 rounded-sm text-white bg-green-700 hover:bg-green-500"
             >
               View
             </Link>
           )}
-          <button
-            onClick={() => onToggleRead(notification.id, !isRead)}
-            className="flex items-center gap-1 text-xs font-medium text-slate-400 hover:text-slate-600"
-          >
-            <Circle
-              className={`w-2 h-2 ${isRead ? "" : "fill-cta text-cta"}`}
-            />
-            {isRead ? "Mark as unread" : "Mark as read"}
-          </button>
+      
           <span className="ml-auto flex items-center gap-1 text-xs text-slate-400 shrink-0">
             <Clock className="w-3 h-3" />
             {formatDistanceToNow(new Date(notification.createdAt), {
