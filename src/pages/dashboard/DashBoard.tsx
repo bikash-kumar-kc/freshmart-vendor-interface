@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Package, FileSpreadsheet, Truck, ShoppingCart } from "lucide-react";
 
-import StatCard from "./StatCard";
-import NotificationCard from "./NotificationCard";
+import StatCard from "../../components/StatCard";
+import NotificationCard from "../../components/NotificationCard";
 import {
   useDashboardStats,
   useLatestNotifications,
   useMarkNotificationRead,
-} from "./dashboard.queries";
+} from "../../hooks/dashboard.queries";
 import { useAuthContext } from "@/context/AuthContext";
 import MotionStagger from "@/components/motion/MotionStagger";
 import Motion from "@/components/motion/Motion";

@@ -3,7 +3,8 @@ import {
   FileSpreadsheet, CheckCircle2, XCircle, Truck, Trash2,
   type LucideIcon,
 } from 'lucide-react';
-import type { NotificationSubType } from './notification.types';
+import type { NotificationSubType } from './notification.type';
+
 
 
 export const notificationMeta: Record<NotificationSubType, { icon: LucideIcon; label: string; color: string }> = {

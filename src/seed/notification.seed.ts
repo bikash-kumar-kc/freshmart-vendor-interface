@@ -1,10 +1,5 @@
-// src/features/dashboard/dashboard.mock.ts
-// Temporary — replace with real API data once /vendor/stats/dashboard
-// and /notifications/vendor/latest are wired up.
-
-import type { IDashboardStats, INotification } from "./notification.types";
-
-
+import type { IDashboardStats } from "@/types/dashboardState.type";
+import type { INotification } from "@/types/notification/notification.type";
 
 const hoursAgo = (h: number) =>
   new Date(Date.now() - h * 60 * 60 * 1000).toISOString();

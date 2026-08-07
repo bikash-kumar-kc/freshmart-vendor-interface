@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import vendorDashboardServices from './dashboar.service';
-import { mockNotifications, mockStats } from './notification.seed';
+import vendorDashboardServices from '../api/dashboard/dashboar.service';
+import { mockNotifications, mockStats } from '../seed/notification.seed';
 
 
 export const dashboardKeys = {

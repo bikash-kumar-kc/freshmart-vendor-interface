@@ -1,5 +1,5 @@
 import { api } from "@/api/axios";
-import type { IDashboardStats, INotification } from "./notification.types";
+import type { IDashboardStats, INotification } from "../../pages/dashboard/notification.types";
 
 
 class VendorDashboardServices {
