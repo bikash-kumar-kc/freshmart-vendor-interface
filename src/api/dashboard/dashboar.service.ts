@@ -1,5 +1,6 @@
 import { api } from "@/api/axios";
-import type { IDashboardStats, INotification } from "../../pages/dashboard/notification.types";
+import type { IDashboardStats } from "@/types/dashboardState.type";
+import type { INotification } from "@/types/notification/notification.type";
 
 
 class VendorDashboardServices {
@@ -11,10 +12,7 @@ class VendorDashboardServices {
     const { data } = await api.get('/notifications/vendor/latest');
     return data;
   }
-  async markNotificationRead(id: number, isRead = true): Promise<INotification> {
-    const { data } = await api.patch(`/notifications/${id}/read`, { isRead });
-    return data;
-  }
+
 }
 
 const vendorDashboardServices = new VendorDashboardServices();
