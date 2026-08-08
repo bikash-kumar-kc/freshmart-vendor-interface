@@ -7,8 +7,11 @@ import Product from "./products/Product";
 import Quotation from "./quotations/Quotation";
 import VendorRegistration from "./vendor/VendorRegistration";
 import VerifyEmail from "./vendor/VerifyEmail";
-import Inventory from "./orders/Inventory";
-import Display from "./orders/Display";
+import Inventory from "./orders/inventory/Inventory";
+import Display from "./orders/display/Display";
+import ProductDetails from "./products/ProductDetails";
+import OrderDetails from "./orders/OrderDetails";
+import QuotationDetials from "./quotations/QuotationDetials";
 
 export {
   Login,
@@ -22,4 +25,7 @@ export {
   VerifyEmail,
   Inventory,
   Display,
+  ProductDetails,
+  OrderDetails,
+  QuotationDetials,
 };
