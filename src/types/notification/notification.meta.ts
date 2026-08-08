@@ -22,10 +22,10 @@ export const notificationMeta: Record<NotificationSubType, { icon: LucideIcon; l
 };
 
 const referenceRouteMap: Record<string, (id: string) => string> = {
-  product_listing: (id) => `/products/${id}`,
-  quotation: (id) => `/quotations/${id}`,
-  display_order: (id) => `/orders/display/${id}`,
-  order: (id) => `/orders/inventory/${id}`,
+  product_listing: (id) => `/product/${id}`,
+  quotation: (id) => `/quotation/${id}`,
+  display_order: (id) => `/order/${id}`,
+  order: (id) => `/order/${id}`,
 };
 
 export const getReferenceRoute = (referenceType: string | null, referenceId: string | null) => {
