@@ -153,7 +153,7 @@ export default function VendorRegistrationPage() {
     }
 
     try {
-      const response = await imagekitservice.deleteFile(fileId);
+       await imagekitservice.deleteFile(fileId);
       toast.add({ type: "success", description: "File deleted successfully" });
     } catch {
       console.log("Failed to delete file !");

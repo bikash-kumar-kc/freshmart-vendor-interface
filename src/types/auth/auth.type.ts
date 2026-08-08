@@ -2,6 +2,7 @@ export interface IAuthUser {
   id: string;
   email: string;
   role: "user" | "vendor" | "admin";
+  vendorId: string;
 }
 
 export interface ILoginPayload {
@@ -19,11 +20,14 @@ export interface ISetupAccountPayload {
   isVendor: boolean;
 }
 
-export interface ISetupAccountResponse {
-  id: string;
-  email: string;
-  role: "user" | "vendor" | "admin";
-}
+// export interface ISetupAccountResponse {
+//   id: string;
+//   email: string;
+//   role: "user" | "vendor" | "admin";
+//   vendorId:string;
+// }
+
+export type ISetupAccountResponse = IAuthUser;
 
 export interface IGetCurrentUserResponse {
   user: IAuthUser;

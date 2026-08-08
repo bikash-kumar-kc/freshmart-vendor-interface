@@ -78,13 +78,7 @@ export type ISearchProductListingResponse = IProductListing[];
 // GET /product-listing/rejected
 export type IListRejectedProductListingsResponse = IProductListing[];
 
-// GET /product-listing/stats/dashboard
-export interface IVendorDashboardStats {
-  totalProducts: number;
-  approvedProducts: number;
-  unapprovedProducts: number;
-  totalOrders: number;
-}
+
 
 // PATCH /product-listing/:id
 export interface IUpdateProductListingPayload {

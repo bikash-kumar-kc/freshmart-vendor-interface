@@ -11,7 +11,7 @@ interface AuthContextValue {
   user: IAuthUser | null;
   isLoading: boolean;
   refetchUser: (data: IAuthUser) => void;
-  setUser: (data:null) => void;
+  setUser: (data: null) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -28,6 +28,7 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
         id: response.user.id,
         role: response.user.role,
         email: response.user.email,
+        vendorId: response.user.vendorId,
       });
     } catch {
       toast.add({ type: "error", description: "User is not logged in !" });
