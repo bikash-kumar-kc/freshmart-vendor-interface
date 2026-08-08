@@ -8,8 +8,11 @@ import {
   Login,
   Notification,
   Order,
+  OrderDetails,
   Product,
+  ProductDetails,
   Quotation,
+  QuotationDetials,
   Signup,
   VendorRegistration,
   VerifyEmail,
@@ -29,17 +32,31 @@ const authenticatedPages = [
     component: <Notification />,
     path: "/notification",
   },
-  {
-    component: <Order />,
-    path: "/order",
-  },
+
   {
     component: <Product />,
     path: "/product",
   },
   {
+    component: <ProductDetails />,
+    path: "product/:id",
+  },
+
+  {
     component: <Quotation />,
     path: "/quotation",
+  },
+  {
+    component: <QuotationDetials />,
+    path: "/quotation/:id",
+  },
+  {
+    component: <Order />,
+    path: "/order",
+  },
+  {
+    component: <OrderDetails />,
+    path: "/order/:id",
   },
   {
     component: <Inventory />,
@@ -49,6 +66,7 @@ const authenticatedPages = [
     component: <Display />,
     path: "/order/display",
   },
+
   {
     component: <Profile />,
     path: "/profile",
