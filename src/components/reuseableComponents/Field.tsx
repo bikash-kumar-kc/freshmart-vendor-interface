@@ -13,8 +13,8 @@ export function Field({
   label: string;
   required?: boolean;
   error?: string;
-  activeField: string | null;
-  setActiveField: (name: string | null) => void;
+  activeField?: string | null;
+  setActiveField?: (name: string | null) => void;
   children: React.ReactNode;
 }) {
   const isActive = activeField === name;
@@ -22,8 +22,10 @@ export function Field({
 
   return (
     <div
-      onFocus={() => setActiveField(name)}
-      onBlur={() => setActiveField(null)}
+      onFocus={() =>
+       setActiveField(name)
+      }
+      onBlur={() => (setActiveField(null))}
     >
       <label className="block text-sm font-medium text-slate-700 mb-1.5">
         {label}
