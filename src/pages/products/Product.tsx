@@ -1,10 +1,621 @@
+import { useState } from "react";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus, Trash2 } from "lucide-react";
+import { toast } from "@/components/ui/toast";
+import { useAuthContext } from "@/context/AuthContext";
+import type { IUploadedImage } from "@/types/productListing/productListing.type";
+import {
+  useCategories,
+  useMeasurementTypes,
+  usePackagingTypes,
+  useProductNames,
+} from "@/lib/tanstackquery/productlisting/lookup.queries";
+import { useCreateProductListing } from "@/lib/tanstackquery/productlisting/product-listing.queries";
+import {
+  productListingSchema,
+  type ProductListingFormValues,
+} from "@/lib/validation/productListing.validation";
+import imagekitservice from "@/api/imagekit/imagekit";
+import PageHeading from "@/components/PagingHeading";
+import { Field } from "@/components/reuseableComponents/Field";
+import ReusableCombobox from "@/components/ReuseableComobox";
+import ReusableImageUploader from "@/components/ReuseableImageUploader";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-const Product = () => {
+const inputClass =
+  "w-full bg-white border border-slate-200 rounded-lg px-3 py-[11px] text-sm text-slate-800 outline-none focus:border-[#3B6D11] placeholder:text-slate-400";
+const errorInputClass =
+  "w-full bg-white border border-rose-300 rounded-lg px-3 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-rose-500/20 placeholder:text-slate-400";
+
+function SectionCard({
+  step,
+  title,
+  description,
+  children,
+}: {
+  step: number;
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div>
-      <h1>this is product page...</h1>
-    </div>
-  )
+    <section className="bg-white border border-slate-200 rounded-sm p-4 sm:p-6">
+      <div className="flex items-start gap-3 mb-5">
+        <div className="w-7 h-7 rounded-full bg-[#3ee93b] text-white text-xs font-semibold flex items-center justify-center shrink-0 mt-0.5">
+          {step}
+        </div>
+        <div>
+          <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
+          {description && (
+            <p className="text-[10px] text-slate-500 mt-0.5">{description}</p>
+          )}
+        </div>
+      </div>
+      {children}
+    </section>
+  );
 }
 
-export default Product
+const emptyVariant = () => ({
+  size: 0,
+  measurementId: 0,
+  quantity: 0,
+  pricePerUnit: 0,
+  sellingPrice: null,
+});
+
+export default function AddProductPage() {
+  const { user } = useAuthContext();
+  const [activeField, setActiveField] = useState<string | null>(null);
+  const [images, setImages] = useState<IUploadedImage[]>([]);
+
+  const { data: productNames = [], isLoading: productNamesLoading } =
+    useProductNames();
+  const { data: categories = [], isLoading: categoriesLoading } =
+    useCategories();
+  const { data: packagingTypes = [], isLoading: packagingLoading } =
+    usePackagingTypes();
+  const { data: measurementTypes = [], isLoading: measurementLoading } =
+    useMeasurementTypes();
+
+  const createProductListing = useCreateProductListing();
+
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<ProductListingFormValues>({
+    resolver: zodResolver(productListingSchema),
+    defaultValues: {
+      type: "inventory",
+      isTaxable: false,
+      variants: [emptyVariant()],
+    },
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "variants",
+  });
+  const listingType = watch("type");
+
+  const categoryOptions = categories.map((c) => ({
+    id: c.id,
+    label: c.categoryName,
+  }));
+  const productOptions = productNames.map((p) => ({ id: p.id, label: p.name }));
+  const packagingOptions = packagingTypes.map((p) => ({
+    id: p.id,
+    label: p.name,
+  }));
+  const measurementOptions = measurementTypes.map((m) => ({
+    id: m.id,
+    label: m.name,
+  }));
+
+  const onSubmit = async (values: ProductListingFormValues) => {
+    if (!user?.vendorId) {
+      toast.add({
+        type: "error",
+        description: "Vendor session not found. Please log in again.",
+      });
+      return;
+    }
+
+    try {
+      await createProductListing.mutateAsync({
+        productId: values.productId,
+        type: values.type,
+        localName: values.localName,
+        categoryId: values.categoryId,
+        keywords: values.keywords,
+        description: values.description,
+        images: images.map((img) => img.url),
+        originCountry: values.originCountry,
+        farmName: values.farmName,
+        packagingTypeId: values.packagingTypeId,
+        isTaxable: values.isTaxable,
+        variants: values.variants.map((v) => ({
+          size: v.size,
+          measurementId: v.measurementId,
+          quantity: v.quantity,
+          pricePerUnit: v.pricePerUnit,
+          sellingPrice: v.sellingPrice as number | undefined,
+        })),
+      });
+
+      toast.add({
+        type: "success",
+        description: "Product submitted for review.",
+      });
+    } catch {
+      if (images.length > 0) {
+        try {
+          await imagekitservice.deleteFiles(images.map((img) => img.fileId));
+        } catch {
+          console.log(
+            "Failed to clean up uploaded images after submission failure.",
+          );
+        }
+      }
+      toast.add({
+        type: "error",
+        description: "Failed to submit product. Please try again.",
+      });
+    }
+  };
+
+  return (
+    <div>
+      <PageHeading
+        title="Add New Product"
+        subtitle="List a product for your vendor catalog. Submissions go to admin for review before going live."
+      />
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <SectionCard
+          step={1}
+          title="Basic information"
+          description="What the product is and how it's categorized."
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field
+              name="productId"
+              label="Product"
+              required
+              error={errors.productId?.message}
+              // activeField={activeField}
+              // setActiveField={setActiveField}
+            >
+              <Controller
+                name="productId"
+                control={control}
+                render={({ field }) => (
+                  <ReusableCombobox
+                    items={productOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select product"
+                    searchPlaceholder="Search products..."
+                    loading={productNamesLoading}
+                    hasError={!!errors.productId}
+                    className=" text-base bg-gray-50 border-2 border-gray-300 rounded-xl lg:w-100"
+                    contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
+                  />
+                )}
+              />
+            </Field>
+
+            <Controller
+              name="type"
+              control={control}
+              render={({ field }) => (
+                <Field
+                  name="type"
+                  label="Listing type"
+                  required
+                  activeField={activeField}
+                  setActiveField={setActiveField}
+                >
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger className="text-base bg-gray-50 border-2  border-gray-300 rounded-xl lg:w-100">
+                      <SelectValue placeholder="Select listing type" />
+                    </SelectTrigger>
+
+                    <SelectContent
+                      side="bottom"
+                      sideOffset={10}
+                      position="popper"
+                      className="bg-gray-50 border border-gray-300 lg:w-[400px] shadow-lg"
+                    >
+                      <SelectItem
+                        value="inventory"
+                        className="
+      cursor-pointer
+      rounded-md
+      border border-transparent
+      px-3 py-2
+      hover:bg-green-700
+      hover:text-white
+      data-[highlighted]:bg-green-700
+      data-[highlighted]:text-white
+      data-[selected]:bg-green-700
+      data-[selected]:text-white
+    "
+                      >
+                        Inventory
+                      </SelectItem>
+
+                      <SelectItem
+                        value="display"
+                        className="
+      cursor-pointer
+      rounded-md
+      border border-transparent
+      px-3 py-2
+      hover:bg-green-700
+      hover:text-white
+      data-[highlighted]:bg-green-700
+      data-[highlighted]:text-white
+      data-[selected]:bg-green-700
+      data-[selected]:text-white
+    "
+                      >
+                        Display
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+              )}
+            />
+
+            <Field
+              name="localName"
+              label="Local name"
+              activeField={activeField}
+              setActiveField={setActiveField}
+            >
+              <input
+                className={inputClass}
+                placeholder="e.g. Golbheda"
+                {...register("localName")}
+              />
+            </Field>
+
+            <Field
+              name="categoryId"
+              label="Category"
+              required
+              error={errors.categoryId?.message}
+              // activeField={activeField}
+              // setActiveField={setActiveField}
+            >
+              <Controller
+                name="categoryId"
+                control={control}
+                render={({ field }) => (
+                  <ReusableCombobox
+                    items={categoryOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select category"
+                    searchPlaceholder="Search categories..."
+                    loading={categoriesLoading}
+                    hasError={!!errors.categoryId}
+                    className=" text-base bg-gray-50 border-2 border-gray-300 rounded-xl lg:w-100"
+                    contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
+                  />
+                )}
+              />
+            </Field>
+
+            <Field
+              name="keywords"
+              label="Keywords"
+              activeField={activeField}
+              setActiveField={setActiveField}
+            >
+              <input
+                className={inputClass}
+                placeholder="organic, fresh, local"
+                {...register("keywords")}
+              />
+            </Field>
+          </div>
+
+          <div className="mt-4">
+            <Field
+              name="description"
+              label="Description"
+              activeField={activeField}
+              setActiveField={setActiveField}
+            >
+              <textarea
+                rows={4}
+                className={inputClass}
+                placeholder="Describe the product, quality, and anything customers should know"
+                {...register("description")}
+              />
+            </Field>
+          </div>
+        </SectionCard>
+
+        {/* 2. Origin & packaging */}
+        <SectionCard
+          step={2}
+          title="Origin & packaging"
+          description="Where it comes from and how it ships."
+        >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field
+              name="originCountry"
+              label="Origin country"
+              required
+              error={errors.originCountry?.message}
+              activeField={activeField}
+              setActiveField={setActiveField}
+            >
+              <input
+                className={errors.originCountry ? errorInputClass : inputClass}
+                placeholder="e.g. Nepal"
+                {...register("originCountry")}
+              />
+            </Field>
+
+            <Field
+              name="farmName"
+              label="Farm name"
+              activeField={activeField}
+              setActiveField={setActiveField}
+            >
+              <input
+                className={inputClass}
+                placeholder="e.g. Green Valley Farm"
+                {...register("farmName")}
+              />
+            </Field>
+
+            <Field
+              name="packagingTypeId"
+              label="Packaging type"
+              required
+              error={errors.packagingTypeId?.message}
+              // activeField={activeField}
+              // setActiveField={setActiveField}
+            >
+              <Controller
+                name="packagingTypeId"
+                control={control}
+                render={({ field }) => (
+                  <ReusableCombobox
+                    items={packagingOptions}
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select packaging"
+                    searchPlaceholder="Search packaging..."
+                    loading={packagingLoading}
+                    hasError={!!errors.packagingTypeId}
+                    className=" text-base  border-2 border-gray-300 rounded-xl lg:w-100"
+                    contentClassName=" border-gray-300 lg:w-[400px]"
+                  />
+                )}
+              />
+            </Field>
+
+            <div className="flex items-center gap-2 pt-7">
+              <input
+  id="isTaxable"
+  type="checkbox"
+  className="
+    w-4 h-5
+    rounded
+    border-slate-300
+    accent-[#00db4d]
+    text-white
+  "
+  {...register("isTaxable")}
+/>
+              <label htmlFor="isTaxable" className="text-sm text-slate-700">
+                This product is taxable
+              </label>
+            </div>
+          </div>
+        </SectionCard>
+
+        {/* 3. Variants */}
+        <SectionCard
+          step={3}
+          title="Variants"
+          description="Size and pricing options buyers can choose from."
+        >
+          <div className="flex flex-col gap-4">
+            {fields.map((field, idx) => (
+              <div
+                key={field.id}
+                className="border border-slate-200 rounded-xl p-4 relative"
+              >
+                {fields.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => remove(idx)}
+                    className="absolute top-3 right-3 text-slate-300 hover:text-rose-500"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+                <p className="text-xs font-medium text-slate-500 mb-3">
+                  Variant {idx + 1}
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Field
+                    name={`variants.${idx}.size`}
+                    label="Size"
+                    required
+                    error={errors.variants?.[idx]?.size?.message}
+                    activeField={activeField}
+                    setActiveField={setActiveField}
+                  >
+                    <input
+                      type="number"
+                      step="any"
+                      className={
+                        errors.variants?.[idx]?.size
+                          ? errorInputClass
+                          : inputClass
+                      }
+                      placeholder="500"
+                      {...register(`variants.${idx}.size`)}
+                      min={0}
+                    />
+                  </Field>
+
+                  <Field
+                    name={`variants.${idx}.measurementId`}
+                    label="Unit"
+                    required
+                    error={errors.variants?.[idx]?.measurementId?.message}
+                    // activeField={activeField}
+                    // setActiveField={setActiveField}
+                  >
+                    <Controller
+                      name={`variants.${idx}.measurementId`}
+                      control={control}
+                      render={({ field: f }) => (
+                        <ReusableCombobox
+                          items={measurementOptions}
+                          value={f.value}
+                          onChange={f.onChange}
+                          placeholder="Unit"
+                          searchPlaceholder="Search units..."
+                          loading={measurementLoading}
+                          hasError={!!errors.variants?.[idx]?.measurementId}
+                          className=" text-base bg-gray-50 border-2 border-gray-300 rounded-xl lg:w-100"
+                          contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
+                        />
+                      )}
+                    />
+                  </Field>
+
+                  <Field
+                    name={`variants.${idx}.quantity`}
+                    label="Quantity"
+                    required
+                    error={errors.variants?.[idx]?.quantity?.message}
+                    activeField={activeField}
+                    setActiveField={setActiveField}
+                  >
+                    <input
+                      type="number"
+                      className={
+                        errors.variants?.[idx]?.quantity
+                          ? errorInputClass
+                          : inputClass
+                      }
+                      placeholder="100"
+                      {...register(`variants.${idx}.quantity`)}
+                      min={0}
+                    />
+                  </Field>
+
+                  <Field
+                    name={`variants.${idx}.pricePerUnit`}
+                    label="Price / unit"
+                    required
+                    error={errors.variants?.[idx]?.pricePerUnit?.message}
+                    activeField={activeField}
+                    setActiveField={setActiveField}
+
+                  >
+                    <input
+                      type="number"
+                      step="any"
+                      className={
+                        errors.variants?.[idx]?.pricePerUnit
+                          ? errorInputClass
+                          : inputClass
+                      }
+                      placeholder="120"
+                      {...register(`variants.${idx}.pricePerUnit`)}
+                      min={0}
+                    />
+                  </Field>
+
+                  <Field
+                    name={`variants.${idx}.sellingPrice`}
+                    label="Selling price"
+                    required={listingType === "inventory"}
+                    error={errors.variants?.[idx]?.sellingPrice?.message}
+                    activeField={activeField}
+                    setActiveField={setActiveField}
+                  >
+                    <input
+                      type="number"
+                      step="any"
+                      className={
+                        errors.variants?.[idx]?.sellingPrice
+                          ? errorInputClass
+                          : inputClass
+                      }
+                      placeholder="150"
+                      min={0}
+                      {...register(`variants.${idx}.sellingPrice`)}
+                    />
+                  </Field>
+                </div>
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={() => append(emptyVariant())}
+              className="flex items-center gap-1.5 text-sm font-medium text-[#3B6D11] hover:text-[#3B6D11]/80 w-fit"
+            >
+              <Plus className="w-4 h-4" />
+              Add another variant
+            </button>
+          </div>
+        </SectionCard>
+
+        {/* 4. Images — moved after variants */}
+        <SectionCard
+          step={4}
+          title="Product images"
+          description="Add at least one clear photo. First image is used as the cover."
+        >
+          <ReusableImageUploader
+            images={images}
+            onImagesChange={setImages}
+            multiple
+          />
+        </SectionCard>
+
+        {/* Actions */}
+        <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pb-8">
+          <button
+            type="button"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting || createProductListing.isPending}
+            className="w-full sm:w-auto px-5 py-2.5 rounded-lg text-sm font-medium bg-[#3B6D11] text-white hover:bg-[#3B6D11]/90 disabled:opacity-60 transition-colors"
+          >
+            Submit for review
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
