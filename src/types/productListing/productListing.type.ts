@@ -56,6 +56,11 @@ export interface IProductListing {
   variants?: IProductListingVariant[];
 }
 
+export interface IUploadedImage {
+  url: string;
+  fileId: string;
+}
+
 
 export type ICreateProductListingResponse = IProductListing;
 
