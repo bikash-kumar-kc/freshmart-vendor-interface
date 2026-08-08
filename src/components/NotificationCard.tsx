@@ -1,6 +1,9 @@
-import { Clock, X} from "lucide-react";
+import { Clock, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import { getReferenceRoute, notificationMeta } from "../types/notification/notification.meta";
+import {
+  getReferenceRoute,
+  notificationMeta,
+} from "../types/notification/notification.meta";
 import { formatDistanceToNow } from "date-fns";
 import type { INotification } from "@/types/notification/notification.type";
 
@@ -74,7 +77,7 @@ export default function NotificationCard({
               View
             </Link>
           )}
-      
+
           <span className="ml-auto flex items-center gap-1 text-xs text-slate-400 shrink-0">
             <Clock className="w-3 h-3" />
             {formatDistanceToNow(new Date(notification.createdAt), {
