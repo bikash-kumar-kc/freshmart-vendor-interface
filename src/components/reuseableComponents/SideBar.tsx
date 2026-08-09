@@ -10,7 +10,6 @@ import {
   ChevronDown,
   Bell,
   LogOut,
-  MoreHorizontal,
   MoreVertical,
   User,
 } from "lucide-react";
@@ -115,7 +114,7 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
         <nav className="space-y-1 mt-10">
           <NavItem to="/dashboard" icon={LayoutDashboard} label="Dashboard" />
 
-          <NavItem to="/product" icon={Package} label="Products" />
+          <NavItem to="/product-layout" icon={Package} label="Products" />
 
           <NavItem to="/quotation" icon={FileText} label="Quotation" />
 
@@ -204,7 +203,7 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
           </div>
 
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger>
               <button className="p-1 rounded-sm hover:bg-primary/10">
                 <MoreVertical className="w-4 h-4 text-muted-foreground" />
               </button>
