@@ -12,6 +12,7 @@ import Display from "./orders/display/Display";
 import ProductDetails from "./products/ProductDetails";
 import OrderDetails from "./orders/OrderDetails";
 import QuotationDetials from "./quotations/QuotationDetials";
+import ProductsPage from "./products/ProductPage.layout";
 
 export {
   Login,
@@ -28,4 +29,5 @@ export {
   ProductDetails,
   OrderDetails,
   QuotationDetials,
+  ProductsPage,
 };
