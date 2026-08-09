@@ -1,15 +1,21 @@
 import React from "react";
 import { motion } from "framer-motion";
 
+interface MotionStaggerProps {
+  idx: number;
+  children: React.ReactNode;
+  isWindowView?: boolean;
+}
+
 const MotionStagger = ({
   idx,
   children,
-}: {
-  idx: number;
-  children: React.ReactNode;
-}) => {
+  isWindowView = true,
+}: MotionStaggerProps) => {
+  const Component = isWindowView ? motion.div : motion.tr;
+
   return (
-    <motion.div
+    <Component
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
@@ -21,7 +27,7 @@ const MotionStagger = ({
       }}
     >
       {children}
-    </motion.div>
+    </Component>
   );
 };
 
