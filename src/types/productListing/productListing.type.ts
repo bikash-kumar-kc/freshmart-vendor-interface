@@ -1,3 +1,4 @@
+\
 export type ProductType = "inventory" | "display";
 
 export interface ICreateVariantPayload {
@@ -84,13 +85,14 @@ export type IListRejectedProductListingsResponse = IProductListing[];
 
 // PATCH /product-listing/:id
 export interface IUpdateProductListingPayload {
+  productListingId: number;
   productId?: number;
   type?: ProductType;
   localName?: string;
   categoryId?: number;
   keywords?: string;
   description?: string;
-  images?: string[];
+  images?: IUploadedImage[];
   originCountry?: string;
   farmName?: string;
   packagingTypeId?: number;
