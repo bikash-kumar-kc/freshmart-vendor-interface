@@ -15,7 +15,7 @@ export interface ICreateProductListingPayload {
   categoryId: number;
   keywords?: string;
   description?: string;
-  images?: string[];
+  images: IUploadedImage[];
   originCountry: string;
   farmName?: string;
   packagingTypeId: number;
@@ -61,7 +61,6 @@ export interface IUploadedImage {
   fileId: string;
 }
 
-
 export type ICreateProductListingResponse = IProductListing;
 
 // GET /product-listing/:id
@@ -82,8 +81,6 @@ export type ISearchProductListingResponse = IProductListing[];
 
 // GET /product-listing/rejected
 export type IListRejectedProductListingsResponse = IProductListing[];
-
-
 
 // PATCH /product-listing/:id
 export interface IUpdateProductListingPayload {
