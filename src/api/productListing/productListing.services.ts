@@ -1,10 +1,38 @@
-import type { ICreateProductListingPayload } from "@/types/productListing/productListing.type";
+import type {
+  ICreateProductListingPayload,
+  IUpdateProductListingPayload,
+} from "@/types/productListing/productListing.type";
 import { api } from "../axios";
+import { toast } from "@/components/ui/toast";
+
+type IGetProductListingDetails = ICreateProductListingPayload;
 
 class ProductListingServices {
   async createProductListing(payload: ICreateProductListingPayload) {
     const { data } = await api.post("/product-listing", payload);
     return data;
+  }
+
+  async getProductListingDetails(id: string, isAuthenticated: boolean) {
+    const { data } = await api.get<IGetProductListingDetails>(
+      `vendor/product-listing/${id}`,
+      {
+        params: {
+          isAuthenticated: isAuthenticated,
+        },
+      },
+    );
+
+    return data;
+  }
+
+  async updateProductListing(payload: IUpdateProductListingPayload) {
+    if (!payload.productListingId) {
+      toast.add({ type: "error", description: "ProductlistingId is required" });
+    }
+    await api.patch(`/vendor/${payload.packagingTypeId}`, {
+      ...payload,
+    });
   }
 }
 
