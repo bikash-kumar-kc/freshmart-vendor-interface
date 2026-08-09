@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, Trash2 } from "lucide-react";
 import { toast } from "@/components/ui/toast";
 import { useAuthContext } from "@/context/AuthContext";
-import type { IUploadedImage } from "@/types/productListing/productListing.type";
+import type {
+  ICreateVariantPayload,
+  IUploadedImage,
+} from "@/types/productListing/productListing.type";
 import {
   useCategories,
   useMeasurementTypes,
@@ -28,7 +31,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate, useParams } from "react-router-dom";
+import type { IParams } from "@/types/params.type";
+import { useGetProductListing } from "@/lib/tanstackquery/productlisting/useGetProductLisitingDetails";
+import { useUpdateProductListing } from "@/lib/tanstackquery/productlisting/useUpdateProductListing";
 
 const inputClass =
   "w-full bg-white border border-slate-200 rounded-lg px-3 py-[11px] text-sm text-slate-800 outline-none focus:border-[#3B6D11] placeholder:text-slate-400";
@@ -76,12 +82,12 @@ const handleMultiplFileDelete = async (fileIds: string[]) => {
   }
 };
 
-const emptyVariant = () => ({
-  size: 0,
-  measurementId: 0,
-  quantity: 0,
-  pricePerUnit: 0,
-  sellingPrice: null,
+const emptyVariant = (v?: ICreateVariantPayload) => ({
+  size: v ? v.size : 0,
+  measurementId: v ? v.measurementId : 0,
+  quantity: v ? v.quantity : 0,
+  pricePerUnit: v ? v.pricePerUnit : 0,
+  sellingPrice: v ? v.sellingPrice : null,
 });
 
 export default function AddProductPage() {
@@ -89,7 +95,14 @@ export default function AddProductPage() {
   const [activeField, setActiveField] = useState<string | null>(null);
   const [images, setImages] = useState<IUploadedImage[]>([]);
 
+  const { id } = useParams<IParams>();
+  const isEditProductListing = !!id;
+
   const navigate = useNavigate();
+
+  const { data: productListingDetails, isLoading } = useGetProductListing(id);
+
+  console.log(productListingDetails);
 
   const { data: productNames = [], isLoading: productNamesLoading } =
     useProductNames();
@@ -101,6 +114,7 @@ export default function AddProductPage() {
     useMeasurementTypes();
 
   const createProductListing = useCreateProductListing();
+  const updateProductListing = useUpdateProductListing();
 
   const {
     control,
@@ -112,9 +126,17 @@ export default function AddProductPage() {
   } = useForm<ProductListingFormValues>({
     resolver: zodResolver(productListingSchema),
     defaultValues: {
-      type: "inventory",
-      isTaxable: false,
-      variants: [emptyVariant()],
+      type: isEditProductListing ? productListingDetails?.type : "display",
+      keywords: isEditProductListing ? productListingDetails?.keywords : "",
+      description: isEditProductListing
+        ? productListingDetails?.description
+        : "",
+      isTaxable: isEditProductListing
+        ? productListingDetails?.isTaxable
+        : false,
+      variants: productListingDetails?.variants?.map((v) =>
+        emptyVariant(v),
+      ) ?? [emptyVariant()],
     },
   });
 
@@ -122,6 +144,7 @@ export default function AddProductPage() {
     control,
     name: "variants",
   });
+
   const listingType = watch("type");
 
   const categoryOptions = categories.map((c) => ({
@@ -147,8 +170,6 @@ export default function AddProductPage() {
   };
 
   const onSubmit = async (values: ProductListingFormValues) => {
-    console.log(values);
-    console.log(images);
     if (!user?.vendorId) {
       toast.add({
         type: "error",
@@ -179,16 +200,26 @@ export default function AddProductPage() {
         packagingTypeId: values.packagingTypeId,
         isTaxable: values.isTaxable,
         variants: values.variants.map((v) => ({
-          size: v.size,
-          measurementId: v.measurementId,
-          quantity: v.quantity,
-          pricePerUnit: v.pricePerUnit,
+          size: v.size as number,
+          measurementId: v.measurementId as number,
+          quantity: v.quantity as number,
+          pricePerUnit: v.pricePerUnit as number,
           sellingPrice: v.sellingPrice as number | undefined,
         })),
       };
 
-      console.log("Required object for listing the product is  :");
-      console.log(requiredRequestObject);
+      if (isEditProductListing && productListingDetails) {
+        await updateProductListing.mutateAsync({
+          ...requiredRequestObject,
+          productListingId: productListingDetails.productListingId,
+        });
+
+        toast.add({
+          type: "success",
+          description: "Product Updated for successfully",
+        });
+        return;
+      }
 
       await createProductListing.mutateAsync(requiredRequestObject);
 
@@ -212,6 +243,31 @@ export default function AddProductPage() {
       });
     }
   };
+
+  useEffect(() => {
+    if (productListingDetails && productListingDetails.images.length > 0) {
+      setImages(productListingDetails?.images as IUploadedImage[]);
+    }
+  }, [productListingDetails]);
+
+  useEffect(() => {
+    if (productListingDetails) {
+      reset({
+        productId: productListingDetails.productId,
+        type: productListingDetails.type,
+        localName: productListingDetails.localName,
+        categoryId: productListingDetails.categoryId,
+        keywords: productListingDetails.keywords,
+        description: productListingDetails.description,
+        // images: productListingDetails.images,
+        originCountry: productListingDetails.originCountry,
+        farmName: productListingDetails.farmName,
+        packagingTypeId: productListingDetails.packagingTypeId,
+        isTaxable: productListingDetails.isTaxable,
+        variants: productListingDetails.variants,
+      });
+    }
+  }, [productListingDetails, reset]);
 
   return (
     <div>
@@ -249,6 +305,7 @@ export default function AddProductPage() {
                     hasError={!!errors.productId}
                     className=" text-base bg-gray-50 border-2 border-gray-300 rounded-xl lg:w-100"
                     contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
+                    initialValue={productListingDetails?.productId}
                   />
                 )}
               />
@@ -352,6 +409,7 @@ export default function AddProductPage() {
                     hasError={!!errors.categoryId}
                     className=" text-base bg-gray-50 border-2 border-gray-300 rounded-xl lg:w-100"
                     contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
+                    initialValue={productListingDetails?.categoryId}
                   />
                 )}
               />
@@ -445,6 +503,7 @@ export default function AddProductPage() {
                     hasError={!!errors.packagingTypeId}
                     className=" text-base  border-2 border-gray-300 rounded-xl lg:w-100"
                     contentClassName=" border-gray-300 lg:w-[400px]"
+                    initialValue={productListingDetails?.packagingTypeId}
                   />
                 )}
               />
@@ -532,7 +591,7 @@ export default function AddProductPage() {
                       render={({ field: f }) => (
                         <ReusableCombobox
                           items={measurementOptions}
-                          value={f.value}
+                          value={f.value as number}
                           onChange={f.onChange}
                           placeholder="Unit"
                           searchPlaceholder="Search units..."
@@ -650,10 +709,16 @@ export default function AddProductPage() {
           </button>
           <button
             type="submit"
-            disabled={isSubmitting || createProductListing.isPending}
+            disabled={
+              isSubmitting ||
+              createProductListing.isPending ||
+              updateProductListing.isPending
+            }
             className="w-full sm:w-auto px-5 py-2.5 rounded-lg text-sm font-medium bg-[#3B6D11] text-white hover:bg-[#3B6D11]/90 disabled:opacity-60 transition-colors"
           >
-            Submit for review
+            {isEditProductListing
+              ? "Update Product for review"
+              : "Submit for review"}
           </button>
         </div>
       </form>
