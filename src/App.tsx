@@ -39,6 +39,10 @@ const authenticatedPages = [
     path: "/product",
   },
   {
+    component: <Product />,
+    path: "/product/:id",
+  },
+  {
     component: <ProductDetails />,
     path: "product/:id",
   },
