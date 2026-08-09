@@ -94,13 +94,15 @@ export default function ProductsPage() {
           >
             <Eye className="w-4 h-4" />
           </button>
-          <button
-            onClick={() => navigate(`/products/${item.id}/edit`)}
-            className="p-1.5 rounded-sm text-cta hover:bg-cta/10"
-            title="Edit product"
-          >
-            <Pencil className="w-4 h-4" />
-          </button>
+          {!item.isAcceptedByAdmin && (
+            <button
+              onClick={() => navigate(`/products/${item.id}/edit`)}
+              className="p-1.5 rounded-sm text-cta hover:bg-cta/10"
+              title="Edit product"
+            >
+              <Pencil className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </td>
     </>
