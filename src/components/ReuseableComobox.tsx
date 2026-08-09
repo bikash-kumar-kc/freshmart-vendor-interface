@@ -1,5 +1,4 @@
-// components/ReusableCombobox.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -29,6 +28,7 @@ interface ReusableComboboxProps {
   hasError?: boolean;
   className?: string;
   contentClassName?: string;
+  initialValue?: number;
 }
 
 export default function ReusableCombobox({
@@ -42,12 +42,19 @@ export default function ReusableCombobox({
   hasError = false,
   className,
   contentClassName,
+  initialValue,
 }: ReusableComboboxProps) {
   const [open, setOpen] = useState(false);
   const selected = items.find((item) => item.id === value);
 
+  useEffect(() => {
+    if (initialValue) {
+      onChange(initialValue);
+    }
+  }, [initialValue]);
+
   return (
-    <Popover open={open} onOpenChange={setOpen} >
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger>
         <Button
           variant="outline"
@@ -69,13 +76,16 @@ export default function ReusableCombobox({
         className={cn(
           "w-[--radix-popover-trigger-width] p-0 bg-white",
           contentClassName,
-          ' outline-none border border-green-400 shadow-lg'
+          " outline-none border border-green-400 shadow-lg",
         )}
         align="start"
       >
         <Command>
-          <CommandInput placeholder={searchPlaceholder} className="h-9 border-0" />
-          <CommandList  className="scrollbar-green">
+          <CommandInput
+            placeholder={searchPlaceholder}
+            className="h-9 border-0"
+          />
+          <CommandList className="scrollbar-green">
             <CommandEmpty>{emptyText}</CommandEmpty>
             <CommandGroup>
               {items.map((item) => (
@@ -90,7 +100,8 @@ export default function ReusableCombobox({
                     value === item.id ? "bg-green-500 text-white" : "",
                     value === item.id
                       ? ""
-                      : "hover:bg-green-400 hover:text-white", 'mt-1',
+                      : "hover:bg-green-400 hover:text-white",
+                    "mt-1",
                   )}
                 >
                   {item.label}
