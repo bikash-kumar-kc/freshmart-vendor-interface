@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useNavigate } from "react-router-dom";
 
 const inputClass =
   "w-full bg-white border border-slate-200 rounded-lg px-3 py-[11px] text-sm text-slate-800 outline-none focus:border-[#3B6D11] placeholder:text-slate-400";
@@ -63,6 +64,18 @@ function SectionCard({
   );
 }
 
+const handleMultiplFileDelete = async (fileIds: string[]) => {
+  if (fileIds.length === 0) {
+    return;
+  }
+
+  try {
+    await imagekitservice.deleteFiles(fileIds);
+  } catch {
+    localStorage.setItem("ImageUrls", fileIds.join(","));
+  }
+};
+
 const emptyVariant = () => ({
   size: 0,
   measurementId: 0,
@@ -75,6 +88,8 @@ export default function AddProductPage() {
   const { user } = useAuthContext();
   const [activeField, setActiveField] = useState<string | null>(null);
   const [images, setImages] = useState<IUploadedImage[]>([]);
+
+  const navigate = useNavigate();
 
   const { data: productNames = [], isLoading: productNamesLoading } =
     useProductNames();
@@ -92,6 +107,7 @@ export default function AddProductPage() {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<ProductListingFormValues>({
     resolver: zodResolver(productListingSchema),
@@ -117,12 +133,22 @@ export default function AddProductPage() {
     id: p.id,
     label: p.name,
   }));
+
   const measurementOptions = measurementTypes.map((m) => ({
     id: m.id,
     label: m.name,
   }));
 
+  const handleCancel = () => {
+    handleMultiplFileDelete(images.map((i) => i.fileId));
+    setImages([]);
+    reset();
+    navigate("/dashboard");
+  };
+
   const onSubmit = async (values: ProductListingFormValues) => {
+    console.log(values);
+    console.log(images);
     if (!user?.vendorId) {
       toast.add({
         type: "error",
@@ -131,15 +157,23 @@ export default function AddProductPage() {
       return;
     }
 
+    if (images.length === 0) {
+      toast.add({
+        type: "error",
+        description: "At least one image is required",
+      });
+      return;
+    }
+
     try {
-      await createProductListing.mutateAsync({
+      const requiredRequestObject = {
         productId: values.productId,
         type: values.type,
         localName: values.localName,
         categoryId: values.categoryId,
         keywords: values.keywords,
         description: values.description,
-        images: images.map((img) => img.url),
+        images,
         originCountry: values.originCountry,
         farmName: values.farmName,
         packagingTypeId: values.packagingTypeId,
@@ -151,7 +185,12 @@ export default function AddProductPage() {
           pricePerUnit: v.pricePerUnit,
           sellingPrice: v.sellingPrice as number | undefined,
         })),
-      });
+      };
+
+      console.log("Required object for listing the product is  :");
+      console.log(requiredRequestObject);
+
+      await createProductListing.mutateAsync(requiredRequestObject);
 
       toast.add({
         type: "success",
@@ -413,17 +452,17 @@ export default function AddProductPage() {
 
             <div className="flex items-center gap-2 pt-7">
               <input
-  id="isTaxable"
-  type="checkbox"
-  className="
+                id="isTaxable"
+                type="checkbox"
+                className="
     w-4 h-5
     rounded
     border-slate-300
     accent-[#00db4d]
     text-white
   "
-  {...register("isTaxable")}
-/>
+                {...register("isTaxable")}
+              />
               <label htmlFor="isTaxable" className="text-sm text-slate-700">
                 This product is taxable
               </label>
@@ -534,7 +573,6 @@ export default function AddProductPage() {
                     error={errors.variants?.[idx]?.pricePerUnit?.message}
                     activeField={activeField}
                     setActiveField={setActiveField}
-
                   >
                     <input
                       type="number"
@@ -550,27 +588,29 @@ export default function AddProductPage() {
                     />
                   </Field>
 
-                  <Field
-                    name={`variants.${idx}.sellingPrice`}
-                    label="Selling price"
-                    required={listingType === "inventory"}
-                    error={errors.variants?.[idx]?.sellingPrice?.message}
-                    activeField={activeField}
-                    setActiveField={setActiveField}
-                  >
-                    <input
-                      type="number"
-                      step="any"
-                      className={
-                        errors.variants?.[idx]?.sellingPrice
-                          ? errorInputClass
-                          : inputClass
-                      }
-                      placeholder="150"
-                      min={0}
-                      {...register(`variants.${idx}.sellingPrice`)}
-                    />
-                  </Field>
+                  {listingType === "inventory" && (
+                    <Field
+                      name={`variants.${idx}.sellingPrice`}
+                      label="Selling price"
+                      required
+                      error={errors.variants?.[idx]?.sellingPrice?.message}
+                      activeField={activeField}
+                      setActiveField={setActiveField}
+                    >
+                      <input
+                        type="number"
+                        step="any"
+                        className={
+                          errors.variants?.[idx]?.sellingPrice
+                            ? errorInputClass
+                            : inputClass
+                        }
+                        placeholder="150"
+                        min={0}
+                        {...register(`variants.${idx}.sellingPrice`)}
+                      />
+                    </Field>
+                  )}
                 </div>
               </div>
             ))}
@@ -604,6 +644,7 @@ export default function AddProductPage() {
           <button
             type="button"
             className="w-full sm:w-auto px-4 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100"
+            onClick={handleCancel}
           >
             Cancel
           </button>
