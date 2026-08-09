@@ -11,6 +11,7 @@ import {
   OrderDetails,
   Product,
   ProductDetails,
+  ProductsPage,
   Quotation,
   QuotationDetials,
   Signup,
@@ -40,6 +41,11 @@ const authenticatedPages = [
   {
     component: <ProductDetails />,
     path: "product/:id",
+  },
+
+  {
+    component: <ProductsPage />,
+    path: "/product-layout",
   },
 
   {
