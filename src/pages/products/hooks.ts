@@ -1,31 +1,24 @@
-// queries/product.queries.ts
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
-import { mockApprovedProducts, mockProductResponse, mockUnapprovedProducts, type IProductListParams } from './requiredUtilis';
-// import productServices from '@/services/product.services';
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { type IProductListParams } from "./requiredUtilis";
+import productServices from "./service";
+import { QUERY_KEYS } from "@/lib/tanstackquery/setup/queryKeys";
 
-export const productKeys = {
-  all: ['products'] as const,
-  approved: (params: IProductListParams) => [...productKeys.all, 'approved', params] as const,
-  unapproved: (params: IProductListParams) => [...productKeys.all, 'unapproved', params] as const,
-};
+
 
 export const useApprovedProducts = (params: IProductListParams) =>
   useQuery({
-    queryKey: productKeys.approved(params),
-    queryFn: () =>
-      Promise.resolve(
-        mockProductResponse(mockApprovedProducts, params.search ?? '', params.page ?? 1, params.pageSize ?? 10),
-      ), // TODO: productServices.getApprovedProducts(params)
+    queryKey: [QUERY_KEYS.getApprovedProducts, params],
+    queryFn: () => productServices.getApprovedProducts(params),
     placeholderData: keepPreviousData,
   });
 
-export const useUnapprovedProducts = (params: IProductListParams, enabled: boolean) =>
+export const useUnapprovedProducts = (
+  params: IProductListParams,
+  enabled: boolean,
+) =>
   useQuery({
-    queryKey: productKeys.unapproved(params),
-    queryFn: () =>
-      Promise.resolve(
-        mockProductResponse(mockUnapprovedProducts, params.search ?? '', params.page ?? 1, params.pageSize ?? 10),
-      ), // TODO: productServices.getUnapprovedProducts(params)
+    queryKey: [QUERY_KEYS.getUnApprovedProducts, params],
+    queryFn: () => productServices.getUnapprovedProducts(params),
     placeholderData: keepPreviousData,
-    enabled, // only fires when the user actually switches to the Unapproved view
+    enabled,
   });
