@@ -3,4 +3,6 @@ export const QUERY_KEYS = {
   signin: "QUERY_KEY_SIGNIN",
   signup: "QUERY_KEY_SIGNUP",
   getproductlistingdetials: "PRODUCTLISTING_DETAILS",
+  getApprovedProducts: "APPROVEDPRODUCTS",
+  getUnApprovedProducts: "UNAPPROVEDPRODUCTS",
 };
