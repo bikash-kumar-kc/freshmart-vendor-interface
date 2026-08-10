@@ -1,4 +1,4 @@
-// pages/ProductsPage.tsx
+
 import { useEffect, useState } from "react";
 import { Eye, Pencil, Search, Plus, PackageX, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -8,11 +8,13 @@ import PageHeading from "@/components/PagingHeading";
 import type { IColumn } from "./ReuseableTable";
 import ReusableTable from "./ReuseableTable";
 import Pagination from "@/components/Pagination";
-
+import RowExpandHint from "@/components/RowExpandHint";
+import Motion from "@/components/motion/Motion";
 const columns: IColumn[] = [
   { id: "id", label: "ID", align: "center", width: "80px" },
   { id: "name", label: "Product", align: "left" },
   { id: "quantity", label: "Total Quantity", align: "right", width: "160px" },
+  { id: "size", label: "Size", align: "right", width: "140px" },
   { id: "price", label: "Unit Price", align: "right", width: "140px" },
   { id: "actions", label: "Actions", align: "center", width: "120px" },
 ];
@@ -23,33 +25,42 @@ const handleFilters = (products: IProductListItem[], searchValue: string) => {
 
   return products.filter(
     (p) =>
-      p.name.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase()) ||
+      p.name
+        ?.toLowerCase()
+        .includes(
+          Number.isNaN(Number(searchValue))
+            ? searchValue.toLowerCase()
+            : searchValue,
+        ) ||
       String(p.id).includes(searchValue) ||
-      p?.localName?.toLocaleLowerCase()?.includes(searchValue),
+      p?.localName?.toLowerCase()?.includes(searchValue.toLowerCase()),
   );
 };
 
-const formatCurrency = (value: number) =>
-  `Rs. ${value.toLocaleString("en-NP")}`;
+const formatCurrency = (value: number) => {
+  if (typeof value === "undefined") return;
+  return `Rs. ${value.toLocaleString("en-NP")}`;
+};
 
 export default function ProductsPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [view, setView] = useState<"approved" | "unapproved">("approved");
-  const pageSize = 10;
+  const limit = 10;
 
-  const params = { page, pageSize };
+  const params = { page, limit };
 
   const approvedQuery = useApprovedProducts(params);
   const unapprovedQuery = useUnapprovedProducts(params, view === "unapproved");
 
   const activeQuery = view === "approved" ? approvedQuery : unapprovedQuery;
 
+  console.log(activeQuery.data);
   const products = activeQuery.data?.data ?? [];
   const totalPages = activeQuery?.data?.totalPages;
   const currentPage = activeQuery?.data?.currentPage;
-  const totalProducts = activeQuery?.data?.total;
+  const totalProducts = activeQuery?.data?.totalProducts;
   const filteredProducts = handleFilters(products, search);
 
   const handleSearchChange = (value: string) => {
@@ -63,49 +74,85 @@ export default function ProductsPage() {
     setSearch("");
   };
 
-  const renderRow = (item: IProductListItem) => (
-    <>
-      <td className="px-4 py-3 text-center font-medium text-gray-700">
-        {item.id}
-      </td>
-      <td className="px-4 py-3">
-        <p className="font-medium text-gray-800">{item.name}</p>
-        {item.localName && (
-          <p className="text-xs text-gray-400">{item.localName}</p>
-        )}
-        {view === "unapproved" && item.isRejectedByAdmin && (
-          <span className="inline-block mt-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-sm bg-red-50 text-red-600">
-            Rejected
-          </span>
-        )}
-      </td>
-      <td className="px-4 py-3 text-right font-medium text-gray-700">
-        {item.totalQuantity}
-      </td>
-      <td className="px-4 py-3 text-right font-medium text-gray-700">
-        {formatCurrency(item.unitPrice)}
-      </td>
-      <td className="px-4 py-3">
-        <div className="flex items-center justify-center gap-1">
-          <button
-            onClick={() => navigate(`/products/${item.id}`)}
-            className="p-1.5 rounded-sm text-primary hover:bg-primary/10"
-            title="View details"
-          >
-            <Eye className="w-4 h-4" />
-          </button>
-          {!item.isAcceptedByAdmin && (
-            <button
-              onClick={() => navigate(`/products/${item.id}/edit`)}
-              className="p-1.5 rounded-sm text-cta hover:bg-cta/10"
-              title="Edit product"
-            >
-              <Pencil className="w-4 h-4" />
-            </button>
+  const renderRow = (item: IProductListItem) => {
+    console.log("render row : ", item);
+    return (
+      <>
+        <td className="px-4 py-3 text-center font-medium text-gray-700">
+          {item.id}
+        </td>
+        <td className="px-4 py-3">
+          <p className="font-medium text-gray-800">{item.name}</p>
+          {item.localName && (
+            <p className="text-xs text-gray-700 font-semibold tracking-wide">
+              {item.localName}
+            </p>
           )}
+          {view === "unapproved" && item.isRejectedByAdmin && (
+            <span className="inline-block mt-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-sm bg-red-50 text-red-600">
+              Rejected
+            </span>
+          )}
+        </td>
+        <td className="px-4 py-3 text-right font-medium text-gray-700">
+          {item.variants[0].quantity}
+        </td>
+
+        <td className="px-4 py-3 text-right font-medium text-gray-700">
+          {formatCurrency(item.variants[0].pricePerUnit)}
+        </td>
+        <td className="px-4 py-3 text-right font-medium text-gray-700">
+          {item.variants[0].size}
+        </td>
+        <td className="px-4 py-3">
+          <div className="flex items-center justify-center gap-1">
+            <button
+              onClick={() => navigate(`/product/${item.id}`)}
+              className="p-1.5 rounded-sm text-primary hover:bg-primary/10"
+              title="View details"
+            >
+              <Eye className="w-4 h-4" />
+            </button>
+            {!item.isAcceptedByAdmin && (
+              <button
+                onClick={() => navigate(`/product/${item.id}`)}
+                className="p-1.5 rounded-sm text-cta hover:bg-cta/10"
+                title="Edit product"
+              >
+                <Pencil className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        </td>
+      </>
+    );
+  };
+
+  const renderExpanded = (item: IProductListItem) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+      {item.variants.map((v) => (
+        <div
+          key={v.id}
+          className="bg-white border border-gray-200 rounded-sm p-3"
+        >
+          <p className="text-xs font-semibold text-gray-500">
+            Size: {v.size}
+            {v.measurementName}
+          </p>
+          <p className="text-xs font-semibold text-gray-500">
+            Quantity: {v.quantity}
+          </p>
+          <p className="text-xs font-semibold text-gray-500">
+            Price: {formatCurrency(v.pricePerUnit)}
+          </p>
+          {/* {v.sellingPrice && (
+            <p className="text-xs text-gray-400">
+              Selling: {formatCurrency(v.sellingPrice)}
+            </p>
+          )} */}
         </div>
-      </td>
-    </>
+      ))}
+    </div>
   );
 
   useEffect(() => {
@@ -161,18 +208,24 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      <ReusableTable<IProductListItem>
-        columns={columns}
-        data={filteredProducts}
-        renderRow={renderRow}
-        rowKey={(item) => item.id}
-        loading={activeQuery.isLoading}
-        emptyMessage={
-          view === "approved"
-            ? "No approved products found."
-            : "No unapproved products found."
-        }
-      />
+      <Motion>
+        <RowExpandHint />
+      </Motion>
+      <Motion>
+        <ReusableTable<IProductListItem>
+          columns={columns}
+          data={filteredProducts}
+          renderRow={renderRow}
+          renderExpanded={renderExpanded}
+          rowKey={(item) => item.id}
+          loading={activeQuery.isLoading}
+          emptyMessage={
+            view === "approved"
+              ? "No approved products found."
+              : "No unapproved products found."
+          }
+        />
+      </Motion>
 
       {!activeQuery.isLoading && products.length > 0 && (
         <div className="flex items-center justify-between mt-4">
@@ -180,30 +233,13 @@ export default function ProductsPage() {
             Page {page} of {totalPages} · {totalProducts} total Product{" "}
             {(totalProducts as number) > 1 ? "s" : ""}
           </p>
-          {/* <div className="flex items-center gap-2">
-            <button
-              disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="px-3 py-1.5 text-sm rounded-sm border border-gray-200 text-gray-600 disabled:opacity-40 hover:bg-gray-50"
-            >
-              Prev
-            </button>
-            <button
-              disabled={page >= (totalPages as number)}
-              onClick={() =>
-                setPage((p) => Math.min(totalPages as number, p + 1))
-              }
-              className="px-3 py-1.5 text-sm rounded-sm border border-gray-200 text-gray-600 disabled:opacity-40 hover:bg-gray-50"
-            >
-              Next
-            </button>
-          </div> */}
+  
 
           <Pagination
             page={page}
-            totalPages={20}
-            onPageChange={() => setPage((prevs) => prevs + 1)}
-            siblingCount={2}
+            totalPages={totalPages as number}
+            onPageChange={(currentPage: number) => setPage(currentPage)}
+            // siblingCount={2}
           />
         </div>
       )}
