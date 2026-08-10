@@ -5,11 +5,18 @@ import type {
 import { api } from "../axios";
 import { toast } from "@/components/ui/toast";
 
-type IGetProductListingDetails = ICreateProductListingPayload;
+type IGetProductListingDetails = {
+  data: ICreateProductListingPayload & { id: number };
+  currentPage: number;
+  hasNextPage: boolean;
+  limit: number;
+  totalPages: number;
+  totalProducts: number;
+};
 
 class ProductListingServices {
   async createProductListing(payload: ICreateProductListingPayload) {
-    const { data } = await api.post("/product-listing", payload);
+    const { data } = await api.post("/vendor/product-listing", payload);
     return data;
   }
 
@@ -29,9 +36,14 @@ class ProductListingServices {
   async updateProductListing(payload: IUpdateProductListingPayload) {
     if (!payload.productListingId) {
       toast.add({ type: "error", description: "ProductlistingId is required" });
+      return;
     }
-    await api.patch(`/vendor/${payload.packagingTypeId}`, {
-      ...payload,
+
+    console.log(payload);
+
+    const { productListingId, ...requiredPayload } = payload;
+    await api.patch(`/vendor/${productListingId}`, {
+      ...requiredPayload,
     });
   }
 }
