@@ -23,6 +23,7 @@ export interface IProductListResponse {
   total: number;
   totalPages: number;
   currentPage: number;
+  totalProducts: number;
 }
 
 export interface IProductListParams {
