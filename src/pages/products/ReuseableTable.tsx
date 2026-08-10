@@ -1,5 +1,5 @@
 import MotionStagger from "@/components/motion/MotionStagger";
-import type { ReactNode } from "react";
+import { Fragment, useState, type ReactNode } from "react";
 
 export interface IColumn {
   id: string;
@@ -12,6 +12,7 @@ interface ReusableTableProps<T> {
   columns: IColumn[];
   data: T[];
   renderRow: (item: T) => ReactNode;
+  renderExpanded?: (item: T) => ReactNode;
   loading?: boolean;
   emptyMessage?: string;
   rowKey: (item: T) => string | number;
@@ -28,10 +29,27 @@ export default function ReusableTable<T>({
   columns,
   data,
   renderRow,
+  renderExpanded,
   loading = false,
   emptyMessage = "No records found.",
   rowKey,
 }: ReusableTableProps<T>) {
+  const [expandedIds, setExpandedIds] = useState<Set<string | number>>(
+    new Set(),
+  );
+
+  const toggleExpanded = (key: string | number) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  };
+
   return (
     <>
       <div className="bg-white border border-gray-200 rounded-sm overflow-hidden">
@@ -70,11 +88,29 @@ export default function ReusableTable<T>({
                   </td>
                 </tr>
               ) : (
-                data.map((item, idx) => (
-                  <MotionStagger idx={idx} isWindowView={false}>
-                    {renderRow(item)}
-                  </MotionStagger>
-                ))
+                data.map((item, idx) => {
+                  const key = rowKey(item);
+                  const isExpanded = expandedIds.has(key);
+                  return (
+                    <Fragment key={key}>
+                      <MotionStagger
+                        idx={idx}
+                        isWindowView={false}
+                        onClick={() => renderExpanded && toggleExpanded(key)}
+                        className="hover:bg-gray-50 cursor-pointer"
+                      >
+                        {renderRow(item)}
+                      </MotionStagger>
+                      {renderExpanded && isExpanded && (
+                        <tr className="bg-gray-50">
+                          <td colSpan={columns.length} className="px-4 py-3">
+                            {renderExpanded(item)}
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
+                  );
+                })
               )}
             </tbody>
           </table>
