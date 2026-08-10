@@ -31,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { data, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { IParams } from "@/types/params.type";
 import { useGetProductListing } from "@/lib/tanstackquery/productlisting/useGetProductLisitingDetails";
 import { useUpdateProductListing } from "@/lib/tanstackquery/productlisting/useUpdateProductListing";
@@ -166,10 +166,12 @@ export default function AddProductPage() {
   }));
 
   const handleCancel = () => {
-    handleMultiplFileDelete(images.map((i) => i.fileId));
-    setImages([]);
+    if (images.length > 0) {
+      handleMultiplFileDelete(images.map((i) => i.fileId));
+      setImages([]);
+    }
     reset();
-    navigate("/dashboard");
+    navigate("/product-layout");
   };
 
   const onSubmit = async (values: ProductListingFormValues) => {
@@ -214,13 +216,15 @@ export default function AddProductPage() {
       if (isEditProductListing && productListingDetails) {
         await updateProductListing.mutateAsync({
           ...requiredRequestObject,
-          productListingId: productListingDetails.productListingId,
+          productListingId: productListingDetails.id,
         });
 
         toast.add({
           type: "success",
           description: "Product Updated for successfully",
         });
+        setImages([]);
+        navigate("/product-layout");
         return;
       }
 
@@ -230,19 +234,12 @@ export default function AddProductPage() {
         type: "success",
         description: "Product submitted for review.",
       });
+      setImages([]);
+      navigate("/product-layout");
     } catch {
-      if (images.length > 0) {
-        try {
-          await imagekitservice.deleteFiles(images.map((img) => img.fileId));
-        } catch {
-          console.log(
-            "Failed to clean up uploaded images after submission failure.",
-          );
-        }
-      }
       toast.add({
         type: "error",
-        description: "Failed to submit product. Please try again.",
+        description: "Failed to submit product or update products",
       });
     }
   };
@@ -252,6 +249,12 @@ export default function AddProductPage() {
       setImages(productListingDetails?.images as IUploadedImage[]);
     }
   }, [productListingDetails]);
+
+  useEffect(() => {
+    return () => {
+      handleCancel();
+    };
+  }, []);
 
   useEffect(() => {
     if (productListingDetails) {
@@ -271,6 +274,14 @@ export default function AddProductPage() {
       });
     }
   }, [productListingDetails, reset]);
+
+  if (isEditProductListing && isLoading) {
+    return (
+      <div className="min-h-screen w-full flex justify-center items-center">
+        <p className="text-gray-500 text-center">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -345,10 +356,10 @@ export default function AddProductPage() {
       px-3 py-2
       hover:bg-green-700
       hover:text-white
-      data-[highlighted]:bg-green-700
-      data-[highlighted]:text-white
-      data-[selected]:bg-green-700
-      data-[selected]:text-white
+      data-highlighted:bg-green-700
+      data-highlighted:text-white
+      data-selected:bg-green-700
+      data-selected:text-white
     "
                       >
                         Inventory
@@ -363,10 +374,10 @@ export default function AddProductPage() {
       px-3 py-2
       hover:bg-green-700
       hover:text-white
-      data-[highlighted]:bg-green-700
-      data-[highlighted]:text-white
-      data-[selected]:bg-green-700
-      data-[selected]:text-white
+      data-highlighted:bg-green-700
+      data-highlighted:text-white
+      data-selected:bg-green-700
+      data-selected:text-white
     "
                       >
                         Display
