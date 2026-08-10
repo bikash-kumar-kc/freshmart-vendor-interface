@@ -55,8 +55,6 @@ export default function ProductsPage() {
   const unapprovedQuery = useUnapprovedProducts(params, view === "unapproved");
 
   const activeQuery = view === "approved" ? approvedQuery : unapprovedQuery;
-
-  console.log(activeQuery.data);
   const products = activeQuery.data?.data ?? [];
   const totalPages = activeQuery?.data?.totalPages;
   const currentPage = activeQuery?.data?.currentPage;
@@ -65,7 +63,7 @@ export default function ProductsPage() {
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
-    setPage(1); // reset to first page on every new search, otherwise stale page can return empty results
+    setPage(1); 
   };
 
   const handleToggleView = () => {
@@ -75,7 +73,6 @@ export default function ProductsPage() {
   };
 
   const renderRow = (item: IProductListItem) => {
-    console.log("render row : ", item);
     return (
       <>
         <td className="px-4 py-3 text-center font-medium text-gray-700">
