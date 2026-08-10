@@ -1,4 +1,3 @@
-// components/Pagination.tsx
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 
 interface PaginationProps {
@@ -84,7 +83,7 @@ export default function Pagination({
         ) : (
           <button
             key={item}
-            onClick={() => onPageChange(item as number)}
+            onClick={() => onPageChange(Number(item))}
             aria-current={page === item ? "page" : undefined}
             className={`flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium transition-colors ${
               page === item
