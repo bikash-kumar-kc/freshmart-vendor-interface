@@ -30,14 +30,13 @@ class ImagekitServices {
     if (!fileId) return;
     try {
       await api.delete(`/imagekit/${fileId}`);
+      // toast.add({ type: "success", description: "Image deleted successfully" });
     } catch (error) {
       if (error instanceof Error) {
         toast.add({ type: "error", description: error.message });
         return;
       }
-
       toast.add({ type: "error", description: "Failed to delete image" });
-
       throw error;
     }
   }
@@ -45,13 +44,18 @@ class ImagekitServices {
   // delete multiple files...
   async deleteFiles(fileIds: string[]) {
     if (!fileIds || fileIds.length === 0) return;
+    console.log(fileIds);
 
     try {
-      await api.delete(`/imagekit/deletefiles`, {
+      await api.delete(`/imagekit/files`, {
         data: {
           fileIds: fileIds,
         },
       });
+      // toast.add({
+      //   type: "success",
+      //   description: "Multiple delete successfully",
+      // });
     } catch (error) {
       if (error instanceof Error) {
         toast.add({ type: "error", description: error.message });
