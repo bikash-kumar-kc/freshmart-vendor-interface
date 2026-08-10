@@ -137,9 +137,6 @@ export default function ReusableImageUploader({
   multiple = true,
   label = "Upload",
 }: ReusableImageUploaderProps) {
-  // Tracks in-flight uploads separately from `images` (which only holds
-  // successfully uploaded files) so each thumbnail can show its own progress
-  // without waiting for the whole batch to finish.
   const [uploadingFiles, setUploadingFiles] = useState<IUploadingFile[]>([]);
 
   const updateProgress = (tempId: string, progress: number) => {
@@ -170,7 +167,6 @@ export default function ReusableImageUploader({
         expire: Number(authparams.expire),
         publicKey: config.publicKey,
         onProgress: (event) => {
-          // event.loaded / event.total are bytes — convert to a 0-100 percentage.
           const percent = event.total > 0 ? Math.round((event.loaded / event.total) * 100) : 0;
           updateProgress(tempId, percent);
         },

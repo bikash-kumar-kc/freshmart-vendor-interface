@@ -61,7 +61,7 @@ export default function ReusableCombobox({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-full justify-between font-normal rounded-lg  px-3  py-2 h-auto text-sm ",
+            "w-full justify-between font-normal rounded-md  px-3  py-2 h-auto text-sm ",
             "focus:ring-2 focus:ring-[#3B6D11]/30 focus:border-[#3B6D11]",
             hasError && "border-rose-300",
             !selected && "text-slate-400",

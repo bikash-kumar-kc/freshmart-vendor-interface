@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Trash2 } from "lucide-react";
+import { Check, Plus, Trash2 } from "lucide-react";
 import { toast } from "@/components/ui/toast";
 import { useAuthContext } from "@/context/AuthContext";
 import type {
@@ -40,6 +40,10 @@ const inputClass =
   "w-full bg-white border border-slate-200 rounded-lg px-3 py-[11px] text-sm text-slate-800 outline-none focus:border-[#3B6D11] placeholder:text-slate-400";
 const errorInputClass =
   "w-full bg-white border border-rose-300 rounded-lg px-3 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-rose-500/20 placeholder:text-slate-400";
+const selectItemClass =
+  "relative cursor-pointer rounded-sm py-2 pl-8 pr-3 text-sm text-gray-700 transition-colors " +
+  "data-[highlighted]:bg-green-700 data-[highlighted]:text-white " +
+  "data-[state=checked]:bg-green-50 data-[state=checked]:text-green-800 data-[state=checked]:font-medium";
 
 function SectionCard({
   step,
@@ -53,7 +57,7 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="bg-white border border-slate-200 rounded-sm p-4 sm:p-6">
+    <section className="bg-white border border-slate-200 rounded-md p-4 sm:p-6 hover:shadow-lg transition-shadow">
       <div className="flex items-start gap-3 mb-5">
         <div className="w-7 h-7 rounded-full bg-[#3ee93b] text-white text-xs font-semibold flex items-center justify-center shrink-0 mt-0.5">
           {step}
@@ -320,7 +324,7 @@ export default function AddProductPage() {
                     searchPlaceholder="Search products..."
                     loading={productNamesLoading}
                     hasError={!!errors.productId}
-                    className=" text-base bg-gray-50 border-2 border-gray-300 rounded-xl lg:w-100"
+                    className=" text-base bg-gray-50 border-2 border-gray-300 rounded-md lg:w-100"
                     contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
                     initialValue={productListingDetails?.productId}
                   />
@@ -339,7 +343,7 @@ export default function AddProductPage() {
                   activeField={activeField}
                   setActiveField={setActiveField}
                 >
-                  <Select value={field.value} onValueChange={field.onChange}>
+                  {/* <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger className="text-base bg-gray-50 border-2  border-gray-300 rounded-xl lg:w-100">
                       <SelectValue placeholder="Select listing type" />
                     </SelectTrigger>
@@ -386,6 +390,34 @@ export default function AddProductPage() {
                         Display
                       </SelectItem>
                     </SelectContent>
+                  </Select> */}
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger
+                      className="h-11 w-full lg:w-[280px] rounded-md border-2 border-gray-300 bg-gray-50 px-3.5 py-5 text-sm text-gray-800
+      transition-colors hover:border-gray-400 data-[placeholder]:text-gray-400"
+                    >
+                      <SelectValue placeholder="Select listing type" />
+                    </SelectTrigger>
+
+                    <SelectContent
+                      side="bottom"
+                      sideOffset={8}
+                      position="popper"
+                      className="w-[--radix-select-trigger-width] rounded-sm border border-gray-200 bg-white p-1 shadow-lg"
+                    >
+                      <SelectItem value="inventory" className={selectItemClass}>
+                        <span className="flex items-center gap-2">
+                          <Check className="h-3.5 w-3.5 opacity-0 data-[state=checked]:opacity-100" />
+                          Inventory
+                        </span>
+                      </SelectItem>
+                      <SelectItem value="display" className={selectItemClass}>
+                        <span className="flex items-center gap-2">
+                          <Check className="h-3.5 w-3.5 opacity-0 data-[state=checked]:opacity-100" />
+                          Display
+                        </span>
+                      </SelectItem>
+                    </SelectContent>
                   </Select>
                 </Field>
               )}
@@ -424,7 +456,7 @@ export default function AddProductPage() {
                     searchPlaceholder="Search categories..."
                     loading={categoriesLoading}
                     hasError={!!errors.categoryId}
-                    className=" text-base bg-gray-50 border-2 border-gray-300 rounded-xl lg:w-100"
+                    className=" text-base bg-gray-50 border-2 border-gray-300 rounded-md lg:w-100"
                     contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
                     initialValue={productListingDetails?.categoryId}
                   />
@@ -518,7 +550,7 @@ export default function AddProductPage() {
                     searchPlaceholder="Search packaging..."
                     loading={packagingLoading}
                     hasError={!!errors.packagingTypeId}
-                    className=" text-base  border-2 border-gray-300 rounded-xl lg:w-100"
+                    className=" text-base  border-2 border-gray-300 rounded-md lg:w-100"
                     contentClassName=" border-gray-300 lg:w-[400px]"
                     initialValue={productListingDetails?.packagingTypeId}
                   />
@@ -614,7 +646,7 @@ export default function AddProductPage() {
                           searchPlaceholder="Search units..."
                           loading={measurementLoading}
                           hasError={!!errors.variants?.[idx]?.measurementId}
-                          className=" text-base bg-gray-50 border-2 border-gray-300 rounded-xl lg:w-100"
+                          className=" text-base bg-gray-50 border-2 border-gray-300 rounded-md lg:w-100"
                           contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
                         />
                       )}
