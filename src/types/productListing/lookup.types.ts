@@ -1,22 +1,22 @@
 export interface IProductName {
-  id: number;
-  name: string;
-  isVerified: boolean;
+  productId: number;
+  productName: string;
+  // isVerified: boolean;
 }
 
 export interface ICategory {
-  id: number;
+  categoryId: number;
   categoryName: string;
 }
 
 export interface IPackagingType {
-  id: number;
-  name: string;
+  packagingId: number;
+  packagingName: string;
   isVerified: boolean;
 }
 
 export interface IMeasurementType {
-  id: number;
-  name: string;
+  measurementId: number;
+  measurementName: string;
   isVerified: boolean;
 }
