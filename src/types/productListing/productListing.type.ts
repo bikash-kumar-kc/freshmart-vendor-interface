@@ -1,4 +1,3 @@
-\
 export type ProductType = "inventory" | "display";
 
 export interface ICreateVariantPayload {
@@ -97,6 +96,7 @@ export interface IUpdateProductListingPayload {
   farmName?: string;
   packagingTypeId?: number;
   variants?: ICreateVariantPayload[];
+  iTaxable?: boolean;
 }
 export type IUpdateProductListingResponse = IProductListing;
 
