@@ -252,7 +252,10 @@ export default function AddProductPage() {
 
   useEffect(() => {
     return () => {
-      handleCancel();
+      if (images.length > 0) {
+        handleMultiplFileDelete(images.map((i) => i.fileId));
+        setImages([]);
+      }
     };
   }, []);
 
