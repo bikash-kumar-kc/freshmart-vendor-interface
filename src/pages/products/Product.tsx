@@ -148,18 +148,21 @@ export default function AddProductPage() {
   const listingType = watch("type");
 
   const categoryOptions = categories.map((c) => ({
-    id: c.id,
+    id: c.categoryId,
     label: c.categoryName,
   }));
-  const productOptions = productNames.map((p) => ({ id: p.id, label: p.name }));
+  const productOptions = productNames.map((p) => ({
+    id: p.productId,
+    label: p.productName,
+  }));
   const packagingOptions = packagingTypes.map((p) => ({
-    id: p.id,
-    label: p.name,
+    id: p.packagingId,
+    label: p.packagingName,
   }));
 
   const measurementOptions = measurementTypes.map((m) => ({
-    id: m.id,
-    label: m.name,
+    id: m.measurementId,
+    label: m.measurementName,
   }));
 
   const handleCancel = () => {
