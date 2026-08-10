@@ -12,7 +12,7 @@ export default function ProtectedRoutes({ children }: { children: ReactNode }) {
     }
   }, [isLoading, navigate, user]);
 
-  if (!user?.id || isLoading) return <p></p>;
+  if (!user || isLoading) return <p></p>;
 
   return <>{children}</>;
 }
