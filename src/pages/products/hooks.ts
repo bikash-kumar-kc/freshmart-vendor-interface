@@ -3,8 +3,6 @@ import { type IProductListParams } from "./requiredUtilis";
 import productServices from "./service";
 import { QUERY_KEYS } from "@/lib/tanstackquery/setup/queryKeys";
 
-
-
 export const useApprovedProducts = (params: IProductListParams) =>
   useQuery({
     queryKey: [QUERY_KEYS.getApprovedProducts, params],

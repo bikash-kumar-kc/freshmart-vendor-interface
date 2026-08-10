@@ -1,11 +1,18 @@
-// types/product.types.ts
+export interface IProductVariant {
+  id: number;
+  size: number;
+  measurementName: string;
+  quantity: number;
+  pricePerUnit: number;
+  sellingPrice: number | null;
+}
+
 export interface IProductListItem {
   id: number;
   name: string;
   localName: string | null;
   type: "inventory" | "display";
-  totalQuantity: number;
-  unitPrice: number;
+  variants: IProductVariant[];
   isAcceptedByAdmin: boolean;
   isRejectedByAdmin: boolean;
   createdAt: string;
@@ -20,7 +27,7 @@ export interface IProductListResponse {
 
 export interface IProductListParams {
   page?: number;
-  pageSize?: number;
+  limit?: number;
   search?: string;
 }
 
