@@ -9,14 +9,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { IColumn } from "../products/ReuseableTable";
-import type { IQuotationListItem, QuotationStatus } from "./types";
-import { useQuotations } from "./quotation.queries";
-import StatusBadge from "./StatusBadge";
+import type { IQuotationListItem, QuotationStatus } from "../../types/quotation/types";
+import { useQuotations } from "../../lib/tanstackquery/quotation/quotation.queries";
+
 import PageHeading from "@/components/PagingHeading";
-import { QUOTATION_STATUS_LABEL } from "./constants";
+import { QUOTATION_STATUS_LABEL } from "../../lib/constants/constants";
 import ReusableTable from "../products/ReuseableTable";
 import Pagination from "@/components/Pagination";
 import { handleFilters } from "../products/ProductPage.layout";
+import StatusBadge from "@/components/StatusBadge";
 
 const columns: IColumn[] = [
   { id: "quotationId", label: "Quotation ID", align: "left", width: "140px" },
