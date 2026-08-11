@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Eye, Pencil, Search, Plus, PackageX, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -19,23 +18,33 @@ const columns: IColumn[] = [
   { id: "actions", label: "Actions", align: "center", width: "120px" },
 ];
 
-const handleFilters = (products: IProductListItem[], searchValue: string) => {
-  const isValidSearchValue = searchValue.trim();
-  if (!isValidSearchValue) return products;
+export const handleFilters = <T,>(
+  items: T[],
+  searchValue: string,
+  searchFields: (keyof T)[],
+) => {
+  const search = searchValue.trim();
 
-  return products.filter(
-    (p) =>
-      p.name
-        ?.toLowerCase()
-        .includes(
-          Number.isNaN(Number(searchValue))
-            ? searchValue.toLowerCase()
-            : searchValue,
-        ) ||
-      String(p.id).includes(searchValue) ||
-      p?.localName?.toLowerCase()?.includes(searchValue.toLowerCase()),
+  if (!search) return items;
+
+  const normalizedSearch = search.toLowerCase();
+
+  return items.filter((item) =>
+    searchFields.some((field) => {
+      const value = item[field];
+
+      if (value === null || value === undefined) return false;
+
+      return String(value).toLowerCase().includes(normalizedSearch);
+    }),
   );
 };
+
+// const filteredProducts = handleFilters(
+//   products,
+//   searchValue,
+//   ['name', 'id', 'localName'],
+// );
 
 const formatCurrency = (value: number) => {
   if (typeof value === "undefined") return;
@@ -59,11 +68,15 @@ export default function ProductsPage() {
   const totalPages = activeQuery?.data?.totalPages;
   const currentPage = activeQuery?.data?.currentPage;
   const totalProducts = activeQuery?.data?.totalProducts;
-  const filteredProducts = handleFilters(products, search);
+  const filteredProducts = handleFilters(products, search, [
+    "name",
+    "id",
+    "localName",
+  ]);
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
-    setPage(1); 
+    setPage(1);
   };
 
   const handleToggleView = () => {
@@ -230,7 +243,6 @@ export default function ProductsPage() {
             Page {page} of {totalPages} · {totalProducts} total Product{" "}
             {(totalProducts as number) > 1 ? "s" : ""}
           </p>
-  
 
           <Pagination
             page={page}
