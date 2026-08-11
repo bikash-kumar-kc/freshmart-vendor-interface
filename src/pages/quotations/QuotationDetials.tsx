@@ -8,13 +8,13 @@ import {
   useAcceptQuotation,
   useCounterQuotation,
   useQuotationDetail,
-} from "./quotation.queries";
+} from "../../lib/tanstackquery/quotation/quotation.queries";
 import { useMeasurementTypes } from "@/lib/tanstackquery/productlisting/lookup.queries";
-import type { ICounterVariantPayload, IQuotationVariant } from "./types";
+import type { ICounterVariantPayload, IQuotationVariant } from "../../types/quotation/types";
 import { toast } from "@/components/ui/toast";
 import PageHeading from "@/components/PagingHeading";
-import StatusBadge from "./StatusBadge";
 import type { IParams } from "@/types/params.type";
+import StatusBadge from "@/components/StatusBadge";
 
 const columns: IColumn[] = [
   { id: "variantId", label: "Variant ID", align: "center", width: "110px" },
