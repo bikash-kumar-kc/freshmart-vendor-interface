@@ -99,7 +99,7 @@ export default function ReusableTable<T>({
                         onClick={() => renderExpanded && toggleExpanded(key)}
                         className="hover:bg-gray-50 cursor-pointer"
                       >
-                        {renderRow(item)}
+                        {renderRow(item,idx)}
                       </MotionStagger>
                       {renderExpanded && isExpanded && (
                         <tr className="bg-gray-50">
