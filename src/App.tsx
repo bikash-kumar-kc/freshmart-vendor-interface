@@ -58,7 +58,7 @@ const authenticatedPages = [
   },
   {
     component: <QuotationDetials />,
-    path: "/quotation/:id",
+    path: "/quotation-details/:id",
   },
   {
     component: <Order />,
