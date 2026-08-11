@@ -256,7 +256,7 @@ export default function AddProductPage() {
 
   useEffect(() => {
     return () => {
-      if (images.length > 0) {
+      if (!isEditProductListing && images.length > 0) {
         handleMultiplFileDelete(images.map((i) => i.fileId));
         setImages([]);
       }
