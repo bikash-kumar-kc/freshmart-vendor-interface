@@ -1,4 +1,4 @@
-import { toast } from "@/components/ui/toast";
+import { showToast } from "@/components/ReactToast";
 import { useAuthContext } from "@/context/AuthContext";
 import useSignin from "@/lib/tanstackquery/queryHook/useSignIn";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -46,20 +46,19 @@ const Login = () => {
 
   const handleSubmitHandler = async (data: ILoginType) => {
     try {
-       vendorLogin(data);
+      vendorLogin(data);
+
+      showToast.success("LogIn Successfully");
     } catch {
-      toast.add({
-        type: "error",
-        title: "Error",
-        description: "Failed to login",
-      });
+
+      showToast.error("Failed to LogIn");
     }
   };
 
   useEffect(() => {
     if (response) {
       refetchUser(response.user);
-      reset()
+      reset();
       navigate("/dashboard");
     }
   }, [response, navigate, refetchUser]);
