@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { useAuthContext } from "@/context/AuthContext";
 import authServices from "@/api/auth/auth";
-import { toast } from "../ui/toast";
 import Cookies from "js-cookie";
 import {
   DropdownMenu,
@@ -23,6 +22,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { showToast } from "../ReactToast";
 
 const navItemBase =
   "flex items-center gap-3 px-3 py-2.5 rounded-sm text-sm font-medium transition-all duration-200";
@@ -78,18 +78,13 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
       Cookies.remove("refreshToken");
       await authServices.logout();
       setUser(null);
-      toast.add({
-        type: "success",
-        title: "Logout",
-        description: "Logout successfully",
-      });
+
+      showToast.success("Logout Successfully");
       navigate("/");
     } catch {
-      toast.add({
-        type: "error",
-        title: "Logout Failed",
-        description: "Failed doing login",
-      });
+
+
+      showToast.error("Failed to LogIn");
     }
   };
 
@@ -139,23 +134,6 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
                 }`}
               />
             </NavLink>
-            {/* <button
-              onClick={() => setOrdersOpen((prev) => !prev)}
-              className={`${navItemBase} w-full ${
-                isOnOrdersRoute ? "bg-green-50 text-green-700" : navItemInactive
-              }`}
-            >
-              <ShoppingBag size={18} />
-
-              <span className="flex-1 text-left">Orders</span>
-
-              <ChevronDown
-                size={16}
-                className={`transition-transform duration-200 ${
-                  ordersOpen ? "rotate-180" : ""
-                }`}
-              />
-            </button> */}
 
             {ordersOpen && (
               <div className="mt-1 ml-4 space-y-1 border-l border-gray-200 pl-3">
