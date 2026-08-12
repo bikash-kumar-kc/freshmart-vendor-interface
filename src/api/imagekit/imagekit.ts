@@ -1,4 +1,5 @@
-import { toast } from "@/components/ui/toast";
+
+import { showToast } from "@/components/ReactToast";
 import { api } from "../axios";
 
 interface IImageKitType {
@@ -17,7 +18,7 @@ class ImagekitServices {
       return response.data;
     } catch (error: unknown) {
       if (error instanceof Error) {
-        toast.add({ type: "error", description: error.message });
+        showToast.error(error.message);
       }
 
       console.log("Failed to get auth params : [Imagekit]");
@@ -30,13 +31,12 @@ class ImagekitServices {
     if (!fileId) return;
     try {
       await api.delete(`/imagekit/${fileId}`);
-      // toast.add({ type: "success", description: "Image deleted successfully" });
     } catch (error) {
       if (error instanceof Error) {
-        toast.add({ type: "error", description: error.message });
+        showToast.error(error.message);
         return;
       }
-      toast.add({ type: "error", description: "Failed to delete image" });
+      showToast.error("Failed to delete image");
       throw error;
     }
   }
@@ -52,16 +52,13 @@ class ImagekitServices {
           fileIds: fileIds,
         },
       });
-      // toast.add({
-      //   type: "success",
-      //   description: "Multiple delete successfully",
-      // });
+
     } catch (error) {
       if (error instanceof Error) {
-        toast.add({ type: "error", description: error.message });
+        showToast.error(error.message);
         return;
       }
-      toast.add({ type: "error", description: "Failed to delete images" });
+      showToast.error("Failed to delete images");
     }
   }
 }
