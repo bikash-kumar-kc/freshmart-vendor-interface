@@ -15,11 +15,11 @@ import { FileUploadBox } from "@/components/reuseableComponents/FileUpload";
 import imagekitservice from "@/api/imagekit/imagekit";
 import { upload } from "@imagekit/react";
 import { config } from "@/config/config";
-import { toast } from "@/components/ui/toast";
 import {
   RegistrationSuccessDialog,
   VerifyEmailDialog,
 } from "./RegistrationSuccessDialog";
+import { showToast } from "@/components/ReactToast";
 
 export default function VendorRegistrationPage() {
   const navigate = useNavigate();
@@ -139,22 +139,26 @@ export default function VendorRegistrationPage() {
       }
     } catch (error) {
       if (error instanceof Error) {
-        toast.add({ type: "error", description: error.message });
+       
+        showToast.error(error.message);
         return;
       }
-      toast.add({ type: "error", description: "Failed to upload image" });
+      
+      showToast.error("Failed to upload image");
     }
   };
 
   const handleFileDelete = async (fileId: string) => {
     if (!fileId) {
-      toast.add({ type: "error", description: "File Id is required !" });
+      
+      showToast.error("File id is Required !");
       return;
     }
 
     try {
-       await imagekitservice.deleteFile(fileId);
-      toast.add({ type: "success", description: "File deleted successfully" });
+      await imagekitservice.deleteFile(fileId);
+      
+      showToast.success("File deleted successfully");
     } catch {
       console.log("Failed to delete file !");
     }
@@ -185,12 +189,9 @@ export default function VendorRegistrationPage() {
         certificates: certificates.map((c) => c.url) ?? undefined,
       });
 
-      toast.add({
-        type: "success",
-        title: "Registration Form",
-        description: "Registration Form Submitted",
-      });
+     
 
+      showToast.success("Registration Form", "Registration Form Submitted.");
       reset();
       setCertificatePreviews([]);
       setCertificates([]);
