@@ -1,6 +1,7 @@
-import { toast } from "@/components/ui/toast";
+// import { toast } from "@/components/ui/toast";
 import { api } from "../axios";
 import Cookies from "js-cookie";
+import { showToast } from "@/components/ReactToast";
 
 // intercepting request to attach token
 api.interceptors.request.use((config) => {
@@ -45,11 +46,9 @@ api.interceptors.response.use(
         refreshQueue = [];
         return api(originalRequest);
       } catch (refreshError) {
-        toast.add({
-          type: "error",
-          title: "Session expired",
-          description: "Please log in again.",
-        });
+      
+
+        showToast.error("Session Expired", "Please log in again");
         window.location.href = "/login";
         refreshQueue.forEach(({ reject }) => reject(refreshError));
         refreshQueue = [];
