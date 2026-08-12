@@ -10,11 +10,14 @@ import {
   useQuotationDetail,
 } from "../../lib/tanstackquery/quotation/quotation.queries";
 import { useMeasurementTypes } from "@/lib/tanstackquery/productlisting/lookup.queries";
-import type { ICounterVariantPayload, IQuotationVariant } from "../../types/quotation/types";
-import { toast } from "@/components/ui/toast";
+import type {
+  ICounterVariantPayload,
+  IQuotationVariant,
+} from "../../types/quotation/types";
 import PageHeading from "@/components/PagingHeading";
 import type { IParams } from "@/types/params.type";
 import StatusBadge from "@/components/StatusBadge";
+import { showToast } from "@/components/ReactToast";
 
 const columns: IColumn[] = [
   { id: "variantId", label: "Variant ID", align: "center", width: "110px" },
@@ -98,17 +101,14 @@ export default function QuotationDetailPage() {
           quotationId: id,
           payload: { variants: changedVariants },
         });
-        toast.add({
-          type: "success",
-          description: "Counter offer sent to admin.",
-        });
+       
+
+        showToast.success("Counter offer sent to admin");
       }
       navigate("/quotation");
     } catch {
-      toast.add({
-        type: "error",
-        description: "Failed to submit your response. Please try again.",
-      });
+      
+      showToast.success("Failed to submit your response. Please try again.");
     }
   };
 
