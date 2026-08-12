@@ -1,4 +1,7 @@
-import { toast } from "@/components/ui/toast";
+
+
+import { showToast } from "@/components/ReactToast";
+
 
 export function handleApiError(error: unknown) {
   if (typeof error === "object" && error !== null && "response" in error) {
@@ -7,24 +10,20 @@ export function handleApiError(error: unknown) {
     const message = response?.data?.message;
 
     if (Array.isArray(message)) {
-      message.forEach((m: string) =>
-        toast.add({ type: "error", title: "Error", description: m }),
-      );
+      message.forEach(
+        (m: string) => showToast.error(m),
+      )
     } else if (typeof message === "string") {
-      toast.add({ type: "error", title: "Error", description: message });
+      
+      showToast.error(message);
     } else {
-      toast.add({
-        type: "error",
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-      });
+    
+      showToast.error("Something went wrong. Please try again.");
     }
     return;
   }
 
-  toast.add({
-    type: "error",
-    title: "Network error",
-    description: "Please check your connection.",
-  });
+  
+
+  showToast.error("Network error", "Please check your connection.");
 }
