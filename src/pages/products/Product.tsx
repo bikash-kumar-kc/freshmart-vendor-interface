@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, Plus, Trash2 } from "lucide-react";
-import { toast } from "@/components/ui/toast";
 import { useAuthContext } from "@/context/AuthContext";
 import type {
   ICreateVariantPayload,
@@ -35,6 +34,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import type { IParams } from "@/types/params.type";
 import { useGetProductListing } from "@/lib/tanstackquery/productlisting/useGetProductLisitingDetails";
 import { useUpdateProductListing } from "@/lib/tanstackquery/productlisting/useUpdateProductListing";
+import { showToast } from "@/components/ReactToast";
 
 const inputClass =
   "w-full bg-white border border-slate-200 rounded-lg px-3 py-[11px] text-sm text-slate-800 outline-none focus:border-[#3B6D11] placeholder:text-slate-400";
@@ -180,18 +180,13 @@ export default function AddProductPage() {
 
   const onSubmit = async (values: ProductListingFormValues) => {
     if (!user?.vendorId) {
-      toast.add({
-        type: "error",
-        description: "Vendor session not found. Please log in again.",
-      });
+     
+      showToast.error("Vendor session not found. Please log in again");
       return;
     }
 
     if (images.length === 0) {
-      toast.add({
-        type: "error",
-        description: "At least one image is required",
-      });
+      showToast.error("At least one image is required !");
       return;
     }
 
@@ -223,10 +218,8 @@ export default function AddProductPage() {
           productListingId: productListingDetails.id,
         });
 
-        toast.add({
-          type: "success",
-          description: "Product Updated for successfully",
-        });
+      
+        showToast.success("Success", "Product Details Updated Successfully ");
         setImages([]);
         navigate("/product-layout");
         return;
@@ -234,17 +227,13 @@ export default function AddProductPage() {
 
       await createProductListing.mutateAsync(requiredRequestObject);
 
-      toast.add({
-        type: "success",
-        description: "Product submitted for review.",
-      });
+      
+      showToast.success("success", "Product submitted for review.");
       setImages([]);
       navigate("/product-layout");
     } catch {
-      toast.add({
-        type: "error",
-        description: "Failed to submit product or update products",
-      });
+      
+      showToast.error("Failed to submit product on update products.");
     }
   };
 
@@ -343,54 +332,7 @@ export default function AddProductPage() {
                   activeField={activeField}
                   setActiveField={setActiveField}
                 >
-                  {/* <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="text-base bg-gray-50 border-2  border-gray-300 rounded-xl lg:w-100">
-                      <SelectValue placeholder="Select listing type" />
-                    </SelectTrigger>
-
-                    <SelectContent
-                      side="bottom"
-                      sideOffset={10}
-                      position="popper"
-                      className="bg-gray-50 border border-gray-300 lg:w-[400px] shadow-lg"
-                    >
-                      <SelectItem
-                        value="inventory"
-                        className="
-      cursor-pointer
-      rounded-md
-      border border-transparent
-      px-3 py-2
-      hover:bg-green-700
-      hover:text-white
-      data-highlighted:bg-green-700
-      data-highlighted:text-white
-      data-selected:bg-green-700
-      data-selected:text-white
-    "
-                      >
-                        Inventory
-                      </SelectItem>
-
-                      <SelectItem
-                        value="display"
-                        className="
-      cursor-pointer
-      rounded-md
-      border border-transparent
-      px-3 py-2
-      hover:bg-green-700
-      hover:text-white
-      data-highlighted:bg-green-700
-      data-highlighted:text-white
-      data-selected:bg-green-700
-      data-selected:text-white
-    "
-                      >
-                        Display
-                      </SelectItem>
-                    </SelectContent>
-                  </Select> */}
+                  
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger
                       className="h-11 w-full lg:w-[280px] rounded-md border-2 border-gray-300 bg-gray-50 px-3.5 py-5 text-sm text-gray-800
