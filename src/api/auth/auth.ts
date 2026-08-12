@@ -7,11 +7,10 @@ import type {
   ISetupAccountResponse,
 } from "@/types/auth/auth.type";
 import { api } from "../axios";
-import { toast } from "@/components/ui/toast";
+// import { toast } from "@/components/ui/toast";
+import { showToast } from "@/components/ReactToast";
 
 class AuthServices {
-
-
   // vendor register/apply.......
   async create(payload: ISetupAccountPayload) {
     const { data } = await api.post<ISetupAccountResponse>(
@@ -44,15 +43,11 @@ class AuthServices {
     return data;
   }
 
-
- // vendor verify otp...
+  // vendor verify otp...
   async verifyOtp(data: { email: string; otp: string }) {
     if (!data.email || !data.otp) {
-      toast.add({
-        type: "error",
-        title: "Data missing",
-        description: "Email or otp is missing",
-      });
+
+      showToast.error("Data missing", "Email or otp is missing ");
     }
     return await api.post("/vendor/otp/verify", { ...data });
   }
@@ -60,11 +55,9 @@ class AuthServices {
   // vendor ask for otp again...
   async resendOtp(data: { email: string }) {
     if (!data.email) {
-      toast.add({
-        type: "error",
-        title: "Data missing",
-        description: "Email or otp is missing",
-      });
+
+
+      showToast.error("Data missing", "Email or otp is missing ");
     }
 
     return await api.post("/vendor/otp/resend", {
