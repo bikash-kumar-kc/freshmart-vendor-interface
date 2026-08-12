@@ -14,9 +14,9 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { toast } from "@/components/ui/toast";
 import authServices from "@/api/auth/auth";
 import { VENDOR_CONSTANT } from "./constant";
+import { showToast } from "@/components/ReactToast";
 
 function formatTime(totalSeconds: number) {
   const m = Math.floor(totalSeconds / 60);
@@ -127,27 +127,24 @@ function VerifyEmailDialog({
 
       setVerifyEmail(false);
 
-      toast.add({
-        type: "success",
-        title: "Email Verify",
-        description: "Your email is verified successfully",
-      });
+      showToast.success("Email Verify", "Your email is verified successfully।");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status;
 
         if (status === 400) {
           setOtp("");
-          toast.add({ type: "error", title: "OTP not matched" });
+          
+          showToast.error("OTP not matched.");
         }
 
         if (status === 429) {
           setRateLimit(true);
-          toast.add({
-            type: "error",
-            title: "Rate limit hit",
-            description: "You have to wait a few minutes before trying again!",
-          });
+          
+          showToast.warning(
+            "Rate Limit Hit",
+            "You have to wait a few minutes before trying again !",
+          );
         }
       }
     }
