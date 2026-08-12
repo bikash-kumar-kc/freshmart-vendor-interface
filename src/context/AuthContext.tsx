@@ -1,11 +1,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { toast } from "@/components/ui/toast";
 import type { ReactNode } from "react";
 import type { IAuthUser } from "@/types/auth/auth.type";
 import authServices from "@/api/auth/auth";
 import "../api/interceptors/interceptor";
 import { useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
+import { showToast } from "@/components/ReactToast";
 
 interface AuthContextValue {
   user: IAuthUser | null;
@@ -31,7 +31,8 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
         vendorId: response.user.vendorId,
       });
     } catch {
-      toast.add({ type: "error", description: "User is not logged in !" });
+
+      showToast.error('User is not logged in !')
     } finally {
       setIsLoading(false);
     }
