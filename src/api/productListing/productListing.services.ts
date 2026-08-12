@@ -3,18 +3,11 @@ import type {
   IUpdateProductListingPayload,
 } from "@/types/productListing/productListing.type";
 import { api } from "../axios";
-import { toast } from "@/components/ui/toast";
+import { showToast } from "@/components/ReactToast";
 
 type IGetProductListingDetails = ICreateProductListingPayload & { id: number };
 
-// type IGetProductListingPagination = {
-//   data: ICreateProductListingPayload & { id: number };
-//   currentPage: number;
-//   hasNextPage: boolean;
-//   limit: number;
-//   totalPages: number;
-//   totalProducts: number;
-// };
+
 
 class ProductListingServices {
   async createProductListing(payload: ICreateProductListingPayload) {
@@ -37,7 +30,8 @@ class ProductListingServices {
 
   async updateProductListing(payload: IUpdateProductListingPayload) {
     if (!payload.productListingId) {
-      toast.add({ type: "error", description: "ProductlistingId is required" });
+     
+      showToast.error("ProductlistingId is required");
       return;
     }
     const { productListingId, ...requiredPayload } = payload;
