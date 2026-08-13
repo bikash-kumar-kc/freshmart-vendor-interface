@@ -206,7 +206,7 @@ export default function DisplayOrdersPage() {
         </div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger>
             <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 border border-gray-200 bg-gray-50 hover:bg-gray-100">
               <FilterIcon className="w-4 h-4" />
               {statusFilter === "all"

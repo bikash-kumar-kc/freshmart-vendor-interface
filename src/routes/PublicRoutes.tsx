@@ -12,7 +12,8 @@ export default function PublicRoutes({ children }: { children: ReactNode }) {
     }
   }, [user, navigate, isLoading]);
 
-  if (!user && isLoading) return <p>loading...public routes</p>;
+  // if (!user && isLoading) return <p>loading...public routes</p>;
+  if (!user && isLoading) return <p></p>;
 
   return <>{children}</>;
 }

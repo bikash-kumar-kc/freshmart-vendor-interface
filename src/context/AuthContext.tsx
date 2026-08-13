@@ -31,7 +31,6 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
         vendorId: response.user.vendorId,
       });
     } catch {
-
       showToast.error('User is not logged in !')
     } finally {
       setIsLoading(false);

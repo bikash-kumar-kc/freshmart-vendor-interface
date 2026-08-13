@@ -2,16 +2,20 @@
 import type { IColumn } from "@/pages/products/ReuseableTable";
 import { useParams, useLocation } from "react-router-dom";
 import { useDisplayOrderDetail } from "./hook";
-import type { IDisplayOrderDetailItem } from "./display-order.types";
+import type {
+  DisplayOrderStatus,
+  IDisplayOrderDetailItem,
+} from "./display-order.types";
 import ReusableTable from "@/pages/products/ReuseableTable";
 import DisplayOrderStatusBadge from "./DisplayOrderStatusBadge";
 import PaymentStatusBadge from "./PaymentStatusBadge";
 import PageHeading from "@/components/PagingHeading";
+import ResponseCountdownBadge from "./ResponseCountdownBadge";
 
 const columns: IColumn[] = [
   { id: "productName", label: "Product", align: "left" },
   { id: "variantId", label: "Variant ID", align: "left", width: "140px" },
-  {id:'measurement',label:'Measurement', align:'left',width:'140px'},
+  { id: "measurement", label: "Measurement", align: "left", width: "140px" },
   { id: "quantity", label: "Quantity", align: "right", width: "110px" },
   { id: "pricePerUnit", label: "Price / Unit", align: "right", width: "140px" },
   { id: "total", label: "Total", align: "right", width: "140px" },
@@ -77,27 +81,38 @@ export default function OrderDetailsPage() {
   return (
     <main className="p-4 sm:p-6 lg:p-8 bg-background min-h-screen">
       <PageHeading
-        title={`Order #${(passedState?.orderId ?? order.id).slice(0, 8)}`}
+        title={`Order Details`}
         subtitle={passedState?.email ?? "Order details"}
       />
 
       <div className="flex items-center justify-between bg-white border border-gray-200 rounded-sm px-5 py-4 mb-5">
         <div className="flex items-center gap-3">
           {order.displayOrderStatus && (
-            <DisplayOrderStatusBadge status={order.displayOrderStatus} />
+            <DisplayOrderStatusBadge
+              status={order.displayOrderStatus}
+              name={"Order Status : "}
+            />
           )}
           <PaymentStatusBadge
             isPayment={order.isPayment}
             orderStatus={order.displayOrderStatus ?? "pending"}
+            name={"Payment Status : "}
           />
         </div>
-        <p className="text-sm text-gray-500">
-          Placed{" "}
-          {new Date(order.createdAt.replace(" ", "T")).toLocaleDateString(
-            "en-US",
-            { year: "numeric", month: "long", day: "numeric" },
-          )}
-        </p>
+        <div className="flex gap-2">
+          <ResponseCountdownBadge
+            createdAt={order.createdAt}
+            status={order.displayOrderStatus as DisplayOrderStatus}
+            title={"Response Window : "}
+          />
+          <p className="text-sm text-gray-500">
+            Placed{" "}
+            {new Date(order.createdAt.replace(" ", "T")).toLocaleDateString(
+              "en-US",
+              { year: "numeric", month: "long", day: "numeric" },
+            )}
+          </p>
+        </div>
       </div>
 
       <ReusableTable<IDisplayOrderDetailItem>
