@@ -1,4 +1,4 @@
-// pages/DisplayOrdersPage.tsx
+
 import { useState, useEffect } from "react";
 import { Search, Filter as FilterIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -9,28 +9,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { IColumn } from "@/pages/products/ReuseableTable";
-// import type { DisplayOrderStatus } from './display-order.types';
+
 import {
   useCancelDisplayOrder,
   useUpdateDisplayOrderStatus,
   useVendorDisplayOrders,
-} from "./hook";
+} from "../../../lib/tanstackquery/displayOrders/hook";
 import {
   DISPLAY_ORDER_STATUS_LABEL,
   DISPLAY_ORDER_TRANSITIONS,
-} from "./display-order.constants";
+} from "../../../lib/constants/display-order.constants";
 import ReusableTable from "@/pages/products/ReuseableTable";
 import Pagination from "@/components/Pagination";
 import type {
   DisplayOrderStatus,
   IDisplayOrderListItem,
-} from "./display-order.types";
-import DisplayOrderStatusBadge from "./DisplayOrderStatusBadge";
+} from "../../../types/order/display-order.types";
+import DisplayOrderStatusBadge from "../../../components/DisplayOrderStatusBadge";
 import PageHeading from "@/components/PagingHeading";
-import PaymentStatusBadge from "./PaymentStatusBadge";
-import ResponseCountdownBadge from "./ResponseCountdownBadge";
+
 import Motion from "@/components/motion/Motion";
 import RowExpandHint from "@/components/RowExpandHint";
+import PaymentStatusBadge from "@/components/PaymentStatusBadge";
+import ResponseCountdownBadge from "@/components/ResponseCountdownBadge";
 
 const columns: IColumn[] = [
   { id: "orderId", label: "Order ID", align: "left", width: "160px" },
@@ -86,19 +87,32 @@ export default function DisplayOrdersPage() {
   const orders = data?.data ?? [];
   const totalPages = data?.totalPages ?? 1;
 
-  // Statuses derived from the current page's data, same pattern used on the quotations list —
-  // no dedicated "available statuses" endpoint exists.
+  
   const availableStatuses = Array.from(
     new Set(orders.map((o) => o.displayOrderStatus)),
   );
 
   const handleViewDetails = (order: IDisplayOrderListItem) => {
-    // Passing order id/email through route state so the detail page's heading
-    // has these immediately, without waiting on its own fetch to resolve.
+    
     navigate(`/order-details/${order.orderId}`, {
       state: { orderId: order.orderId, email: order.email },
     });
   };
+
+  const filterBySearchValue = search.trim()
+    ? orders.filter(
+        (o) =>
+          o.orderId.toLowerCase().includes(search.toLowerCase()) ||
+          o.email.toLowerCase().includes(search.toLowerCase()),
+      )
+    : orders;
+
+  const filterOrderBasedOnStatus =
+    statusFilter === "all"
+      ? filterBySearchValue
+      : filterBySearchValue.filter(
+          (o) => o.displayOrderStatus === statusFilter,
+        );
 
   const renderRow = (item: IDisplayOrderListItem) => {
     const nextStatuses = DISPLAY_ORDER_TRANSITIONS[item.displayOrderStatus];
@@ -187,6 +201,11 @@ export default function DisplayOrdersPage() {
     );
   };
 
+  const handleFilterBySearchValue = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
   return (
     <main className="p-4 sm:p-6 lg:p-8 bg-background min-h-screen">
       <PageHeading
@@ -199,7 +218,7 @@ export default function DisplayOrdersPage() {
           <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleFilterBySearchValue(e.target.value)}
             placeholder="Search by order ID or email"
             className="w-full bg-white border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
           />
@@ -269,7 +288,7 @@ export default function DisplayOrdersPage() {
           </Motion>
           <ReusableTable<IDisplayOrderListItem>
             columns={columns}
-            data={orders}
+            data={filterOrderBasedOnStatus}
             renderRow={renderRow}
             rowKey={(item) => item.orderId}
             loading={isLoading}
