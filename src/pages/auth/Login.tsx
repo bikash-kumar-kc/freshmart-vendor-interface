@@ -47,10 +47,8 @@ const Login = () => {
   const handleSubmitHandler = async (data: ILoginType) => {
     try {
       vendorLogin(data);
-
       showToast.success("LogIn Successfully");
     } catch {
-
       showToast.error("Failed to LogIn");
     }
   };
