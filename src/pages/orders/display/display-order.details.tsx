@@ -1,16 +1,16 @@
-// pages/OrderDetailsPage.tsx
 import type { IColumn } from "@/pages/products/ReuseableTable";
 import { useParams, useLocation } from "react-router-dom";
-import { useDisplayOrderDetail } from "./hook";
+import { useDisplayOrderDetail } from "../../../lib/tanstackquery/displayOrders/hook";
 import type {
   DisplayOrderStatus,
   IDisplayOrderDetailItem,
-} from "./display-order.types";
+} from "../../../types/order/display-order.types";
 import ReusableTable from "@/pages/products/ReuseableTable";
-import DisplayOrderStatusBadge from "./DisplayOrderStatusBadge";
-import PaymentStatusBadge from "./PaymentStatusBadge";
+import DisplayOrderStatusBadge from "../../../components/DisplayOrderStatusBadge";
+
 import PageHeading from "@/components/PagingHeading";
-import ResponseCountdownBadge from "./ResponseCountdownBadge";
+import PaymentStatusBadge from "@/components/PaymentStatusBadge";
+import ResponseCountdownBadge from "@/components/ResponseCountdownBadge";
 
 const columns: IColumn[] = [
   { id: "productName", label: "Product", align: "left" },
