@@ -2,33 +2,33 @@ import MotionStagger from "@/components/motion/MotionStagger";
 import NotificationCard from "@/components/NotificationCard";
 import PageHeading from "@/components/PagingHeading";
 import ReusablePills from "@/components/ReuseablePills";
-import { useMarkNotificationRead } from "@/hooks/dashboard.queries";
+import { useToggleNotification } from "@/hooks/dashboard.queries";
+import { useNotifications } from "@/hooks/notification.queries";
 
-import { mockNotifications } from "@/seed/notification.seed";
+
 import { notificationMeta } from "@/types/notification/notification.meta";
 import type {
   INotification,
   NotificationSubType,
 } from "@/types/notification/notification.type";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type FilterValue = "all" | "unread" | NotificationSubType;
 
 export default function NotificationsPage() {
-  // const { data: notifications = [], isLoading } = useNotifications();
-  // const notifications = mockNotifications;
-  const markRead = useMarkNotificationRead();
+  const { data: notifications = [], isLoading } = useNotifications();
+
+  const markRead = useToggleNotification();
   const [activePill, setActivePill] = useState<FilterValue>("all");
-  const [hiddenIds, setHiddenIds] = useState<number[]>([]);
 
-  const [notifications, setNotification] =
-    useState<INotification[]>(mockNotifications);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [clientNotification, setClientNotification] =
+    useState<INotification[]>(notifications);
+
 
   const pillsItems = useMemo(() => {
     const presentSubTypes = Array.from(
-      new Set(notifications.map((n) => n.subType)),
+      new Set(clientNotification.map((n) => n.subType)),
     );
 
     return [
@@ -39,27 +39,47 @@ export default function NotificationsPage() {
         value: st as FilterValue,
       })),
     ];
-  }, [notifications]);
+  }, [clientNotification]);
 
-  const visible = notifications
-    .filter((n) => !hiddenIds.includes(n.id))
-    .filter((n) => {
-      if (activePill === "all") return true;
-      if (activePill === "unread") return !n.isRead;
-      return n.subType === activePill;
-    });
+
+  const visible = clientNotification.filter((n) => {
+    if (activePill === "all") return true;
+    if (activePill === "unread") {
+      return !n.isRead;
+    }
+    return n.subType === activePill;
+  });
 
   const handleToggleRead = (id: number) => {
-    markRead.mutate({ id });
-    setNotification((prevs) =>
-      prevs.map((p) => (p.id === id ? { ...p, isRead: !p.isRead } : p)),
+    markRead.mutate(
+      { id },
+      {
+    
+        onError: () => {
+          setClientNotification((prevs) =>
+            prevs.map((p) => (p.id === id ? { ...p, isRead: !p.isRead } : p)),
+          );
+        },
+      },
+    );
+
+    setClientNotification((prev) =>
+      prev.map((i) => (i.id === id ? { ...i, isRead: !i.isRead } : i)),
     );
   };
 
   const handleRemove = (id: number) => {
-    markRead.mutate({ id });
-    setHiddenIds((prev) => [...prev, id]);
+
+    console.log("sdf");
+    console.log(id);
+    setClientNotification((prev) => prev.filter((p) => p.id !== id));
   };
+
+  useEffect(() => {
+    if (notifications) {
+      setClientNotification(notifications);
+    }
+  }, [notifications]);
 
   return (
     <main className="p-5 sm:p-8 bg-background min-h-screen">
@@ -79,7 +99,9 @@ export default function NotificationsPage() {
       {isLoading ? (
         <p className="text-sm text-slate-400">Loading...</p>
       ) : visible.length === 0 ? (
-        <p className="text-sm text-slate-400 ml-2 h-100 flex justify-center items-center">No notifications here.</p>
+        <p className="text-sm text-slate-400 ml-2 h-100 flex justify-center items-center">
+          No notifications here.
+        </p>
       ) : (
         <div className="space-y-3">
           {visible.map((n, idx) => (
