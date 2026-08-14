@@ -5,10 +5,10 @@ import {
   DashBoard,
   Display,
   DisplayOrdersPage,
-  Inventory,
+  // Inventory,
   Login,
   Notification,
-  Order,
+  // Order,
   OrderDetails,
   Product,
   ProductDetails,
@@ -63,21 +63,21 @@ const authenticatedPages = [
     path: "/quotation-details/:id",
   },
   {
-    component: <Order />,
-    path: "/order",
+    component: <Display />,
+    path: "/order/display",
   },
   {
     component: <OrderDetails />,
     path: "/order/:id",
   },
-  {
-    component: <Inventory />,
-    path: "order/inventory",
-  },
-  {
-    component: <Display />,
-    path: "/order/display",
-  },
+  // {
+  //   component: <Inventory />,
+  //   path: "order/inventory",
+  // },
+  // {
+  //   component: <Display />,
+  //   path: "/order/display",
+  // },
 
   {
     component: <DisplayOrdersPage />,
