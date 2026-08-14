@@ -5,4 +5,5 @@ export const QUERY_KEYS = {
   getproductlistingdetials: "PRODUCTLISTING_DETAILS",
   getApprovedProducts: "APPROVEDPRODUCTS",
   getUnApprovedProducts: "UNAPPROVEDPRODUCTS",
+  getUnreadCount: "notifications latest count",
 };
