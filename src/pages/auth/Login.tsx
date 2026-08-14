@@ -28,7 +28,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const {
-    mutate: vendorLogin,
+    mutateAsync: vendorLogin,
     data: response,
     isPending: loading,
   } = useSignin();
@@ -46,7 +46,7 @@ const Login = () => {
 
   const handleSubmitHandler = async (data: ILoginType) => {
     try {
-      vendorLogin(data);
+      await vendorLogin(data);
       showToast.success("LogIn Successfully");
     } catch {
       showToast.error("Failed to LogIn");
