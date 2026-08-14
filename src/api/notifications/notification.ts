@@ -10,14 +10,23 @@ class NotificationServices {
     return data;
   }
 
-  async markNotificationRead(id: number): Promise<INotification> {
-    const { data } = await api.patch(`/notifications/${id}/read`);
+  async toggleNotification(id: number) {
+    const { data } = await api.patch<{ message: string }>(
+      `/notifications/${id}`,
+    );
     return data;
   }
 
   async unreadnotifications() {
     const { data } = await api.get<IUnreadCountResponse>(
       `/notifications/vendor/unread-count`,
+    );
+    return data;
+  }
+
+  async getLatestNofitication() {
+    const { data } = await api.get<INotification[]>(
+      "/notifications/vendor/latest",
     );
     return data;
   }
