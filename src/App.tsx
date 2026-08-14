@@ -4,10 +4,11 @@ import ProtectedRoutes from "./routes/ProtectedRoutes";
 import {
   DashBoard,
   Display,
-  Inventory,
+  DisplayOrdersPage,
+  // Inventory,
   Login,
   Notification,
-  Order,
+  // Order,
   OrderDetails,
   Product,
   ProductDetails,
@@ -23,6 +24,7 @@ import { AuthLayout, UnAuthLayout } from "./layout";
 import PublicRoutes from "./routes/PublicRoutes";
 import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
+
 
 const authenticatedPages = [
   {
@@ -61,20 +63,25 @@ const authenticatedPages = [
     path: "/quotation-details/:id",
   },
   {
-    component: <Order />,
-    path: "/order",
+    component: <Display />,
+    path: "/order/display",
   },
   {
     component: <OrderDetails />,
     path: "/order/:id",
   },
+  // {
+  //   component: <Inventory />,
+  //   path: "order/inventory",
+  // },
+  // {
+  //   component: <Display />,
+  //   path: "/order/display",
+  // },
+
   {
-    component: <Inventory />,
-    path: "order/inventory",
-  },
-  {
-    component: <Display />,
-    path: "/order/display",
+    component: <DisplayOrdersPage />,
+    path: "/order-details/:id",
   },
 
   {

@@ -1,23 +1,26 @@
 import { useState } from "react";
-import { Package, FileSpreadsheet, Truck, ShoppingCart } from "lucide-react";
+import { Package, FileSpreadsheet, Truck, ShoppingCart, type LucideProps } from "lucide-react";
 
 import StatCard from "../../components/StatCard";
 import NotificationCard from "../../components/NotificationCard";
 import {
   useDashboardStats,
   useLatestNotifications,
-  useMarkNotificationRead,
+  useToggleNotification,
 } from "../../hooks/dashboard.queries";
 import { useAuthContext } from "@/context/AuthContext";
 import MotionStagger from "@/components/motion/MotionStagger";
 import Motion from "@/components/motion/Motion";
+import { statCards } from "./constant";
+
+const iconMap:Record<string,React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>> = { Package, ShoppingCart, FileSpreadsheet, Truck };
 
 export default function Dashboard() {
   const { user } = useAuthContext();
   const { data: stats, isLoading: statsLoading } = useDashboardStats();
   const { data: notifications = [], isLoading: notifLoading } =
     useLatestNotifications();
-  const markRead = useMarkNotificationRead();
+  const markRead = useToggleNotification();
 
   const [hiddenIds, setHiddenIds] = useState<number[]>([]);
   const [localRead, setLocalRead] = useState<Record<number, boolean>>({});
@@ -51,45 +54,20 @@ export default function Dashboard() {
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-16">
-        <Motion>
-          <StatCard
-            label="Total Products"
-            value={statsLoading ? "—" : (stats?.totalProducts ?? 0)}
-            text="Across all listings"
-            icon={<Package className="w-4 h-4" />}
-            accent="#3B6D11"
-          />
-        </Motion>
-
-        <Motion>
-          <StatCard
-            label="Live Products"
-            value={statsLoading ? "—" : (stats?.liveProducts ?? 0)}
-            text="Currently orderable"
-            icon={<ShoppingCart className="w-4 h-4" />}
-            accent="#3B6D11"
-          />
-        </Motion>
-
-        <Motion>
-          <StatCard
-            label="Pending Quotations"
-            value={statsLoading ? "—" : (stats?.pendingQuotations ?? 0)}
-            text="Awaiting your response"
-            icon={<FileSpreadsheet className="w-4 h-4" />}
-            accent="#C8742A"
-          />
-        </Motion>
-
-        <Motion>
-          <StatCard
-            label="Active Display Orders"
-            value={statsLoading ? "—" : (stats?.activeDisplayOrders ?? 0)}
-            text="Pending or processing"
-            icon={<Truck className="w-4 h-4" />}
-            accent="#C8742A"
-          />
-        </Motion>
+        {statCards.map((card) => {
+          const Icon = iconMap[card.iconName];
+          return (
+            <Motion key={card.key}>
+              <StatCard
+                label={card.label}
+                value={statsLoading ? "—" : (stats?.[card.key] ?? 0)}
+                text={card.text}
+                icon={<Icon className="w-4 h-4" />}
+                accent={card.accent}
+              />
+            </Motion>
+          );
+        })}
       </div>
 
       {/* Recent notifications */}

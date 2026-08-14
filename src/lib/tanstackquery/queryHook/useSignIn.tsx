@@ -6,6 +6,7 @@ const useSignin = () => {
   return useMutation({
     mutationKey: [QUERY_KEYS.signin],
     mutationFn: authServices.login,
+    retry:1
   });
 };
 

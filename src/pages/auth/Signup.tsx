@@ -35,7 +35,7 @@ const Signup = () => {
     useState<boolean>(false);
 
   const {
-    mutate: vendorCreateAccount,
+    mutateAsync: vendorCreateAccount,
     data: response,
     isPending: loading,
   } = useSignup();
@@ -55,14 +55,13 @@ const Signup = () => {
     resolver: zodResolver(schemaForRegister),
   });
 
-  const handleSubmitHandler =  (data: ISignupTypes) => {
+  const handleSubmitHandler = async (data: ISignupTypes) => {
     try {
-        vendorCreateAccount({
+      await vendorCreateAccount({
         email: data.email,
         password: data.password,
         isVendor: true,
       });
-
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.log("Failed to create user ! msg: ", error.message);
@@ -80,10 +79,10 @@ const Signup = () => {
   useEffect(() => {
     if (response) {
       refetchUser(response);
-      reset()
+      reset();
       navigate("/dashboard");
     }
-  }, [response, navigate, refetchUser,reset]);
+  }, [response, navigate, refetchUser, reset]);
 
   return (
     <>

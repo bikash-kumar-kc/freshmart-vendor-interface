@@ -13,6 +13,7 @@ import ProductDetails from "./products/ProductDetails";
 import OrderDetails from "./orders/OrderDetails";
 import QuotationDetials from "./quotations/QuotationDetials";
 import ProductsPage from "./products/ProductPage.layout";
+import DisplayOrdersPage from "./orders/display/display-order.details";
 
 export {
   Login,
@@ -30,4 +31,5 @@ export {
   OrderDetails,
   QuotationDetials,
   ProductsPage,
+  DisplayOrdersPage,
 };

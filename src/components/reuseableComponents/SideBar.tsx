@@ -1,13 +1,13 @@
-import { useState } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+// import { useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Package,
   FileText,
   ShoppingBag,
-  Boxes,
-  Store,
-  ChevronDown,
+  // Boxes,
+  // Store,
+  // ChevronDown,
   Bell,
   LogOut,
   MoreVertical,
@@ -64,13 +64,13 @@ function NavItem({
 }
 
 export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
-  const location = useLocation();
+  // const location = useLocation();
   const { user, setUser } = useAuthContext();
   const navigate = useNavigate();
 
-  const isOnOrdersRoute = location.pathname.startsWith("/order");
+  // const isOnOrdersRoute = location.pathname.startsWith("/order");
 
-  const [ordersOpen, setOrdersOpen] = useState(isOnOrdersRoute);
+  // const [ordersOpen, setOrdersOpen] = useState(isOnOrdersRoute);
 
   const handleLogout = async () => {
     try {
@@ -116,32 +116,31 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
           {/* Orders */}
           <div>
             <NavLink
-              to={"/order"}
-              // end={"/order" === "/"}
+              to={"/order/display"}
               className={({ isActive }) =>
                 `${navItemBase} ${isActive ? navItemActive : navItemInactive}`
               }
-              onClick={() => setOrdersOpen((prev) => !prev)}
+              // onClick={() => setOrdersOpen((prev) => !prev)}
             >
               <ShoppingBag size={18} />
 
               <span className="flex-1 text-left">Orders</span>
 
-              <ChevronDown
+              {/* <ChevronDown
                 size={16}
                 className={`transition-transform duration-200 ${
                   ordersOpen ? "rotate-180" : ""
                 }`}
-              />
+              /> */}
             </NavLink>
 
-            {ordersOpen && (
+            {/* {ordersOpen && (
               <div className="mt-1 ml-4 space-y-1 border-l border-gray-200 pl-3">
                 <NavItem to="/order/inventory" icon={Boxes} label="Inventory" />
 
                 <NavItem to="/order/display" icon={Store} label="Display" />
               </div>
-            )}
+            )} */}
           </div>
         </nav>
       </div>

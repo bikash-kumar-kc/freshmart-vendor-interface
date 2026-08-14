@@ -28,7 +28,7 @@ export default function NotificationCard({
 
   return (
     <div
-      className={`rounded-lg px-4 py-3.5 flex items-start gap-3 border shadow-sm transition-colors ${isRead ? "bg-slate-50 border-slate-100" : "bg-white border-slate-200"} transition-transform duration-300 ease-in-out hover:scale-102`}
+      className={`rounded-lg px-4 py-3.5 flex items-start gap-3 border shadow-sm transition-colors ${isRead ? "bg-white border-slate-100" : " bg-slate-50 border-slate-200"} transition-transform duration-300 ease-in-out hover:scale-102`}
       onClick={() => onToggleRead(notification.id, !isRead)}
     >
       <div
@@ -54,7 +54,11 @@ export default function NotificationCard({
             </span>
           </div>
           <button
-            onClick={() => onRemove(notification.id)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onRemove(notification.id);
+            }}
             className="text-slate-300 hover:text-red-500 shrink-0"
             aria-label="Remove notification"
           >
@@ -73,6 +77,7 @@ export default function NotificationCard({
             <Link
               to={viewRoute}
               className="text-xs font-medium px-2 py-1 rounded-sm text-white bg-green-700 hover:bg-green-500"
+              onClick={(e) => e.stopPropagation()}
             >
               View
             </Link>

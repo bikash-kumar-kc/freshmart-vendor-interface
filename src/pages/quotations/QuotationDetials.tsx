@@ -92,22 +92,18 @@ export default function QuotationDetailPage() {
     try {
       if (changedVariants.length === 0) {
         await acceptMutation.mutateAsync(id);
-        toast.add({
-          type: "success",
-          description: "Quotation accepted at the suggested price.",
-        });
+
+        showToast.success("Quotation accepted at the suggested price.");
       } else {
         await counterMutation.mutateAsync({
           quotationId: id,
           payload: { variants: changedVariants },
         });
-       
 
         showToast.success("Counter offer sent to admin");
       }
       navigate("/quotation");
     } catch {
-      
       showToast.success("Failed to submit your response. Please try again.");
     }
   };
