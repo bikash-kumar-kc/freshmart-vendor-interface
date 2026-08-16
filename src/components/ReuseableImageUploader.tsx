@@ -93,6 +93,7 @@ export default function ReusableImageUploader({
     onImagesChange(images.filter((img) => img.fileId !== fileId));
     try {
       await imagekitservice.deleteFile(fileId);
+      showToast.success("Image deleted successfully ");
     } catch {
       console.log("Failed to delete file from ImageKit — orphaned remotely.");
     }
