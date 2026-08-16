@@ -21,6 +21,8 @@ import {
 } from "./RegistrationSuccessDialog";
 import { showToast } from "@/components/ReactToast";
 import Motion from "@/components/motion/Motion";
+import ReusableImageUploader from "@/components/ReuseableImageUploader";
+import type { IUploadedImage } from "@/types/productListing/productListing.type";
 
 export default function VendorRegistrationPage() {
   const navigate = useNavigate();
@@ -35,23 +37,27 @@ export default function VendorRegistrationPage() {
 
   const [activeField, setActiveField] = useState<string | null>(null);
 
-  const [panVatCertificate, setPanVatCertificate] = useState<Record<
-    string,
-    string
-  > | null>(null);
+  // const [panVatCertificate, setPanVatCertificate] = useState<Record<
+  //   string,
+  //   string
+  // > | null>(null);
+  const [panVatCertificate, setPanVatCertificate] = useState<IUploadedImage[]>(
+    [],
+  );
   const [panVatPreview, setPanVatPreview] = useState<Record<
     string,
     string
   > | null>(null);
 
-  const [certificates, setCertificates] = useState<Record<string, string>[]>(
-    [],
-  );
+  const [certificates, setCertificates] = useState<IUploadedImage[]>([]);
   const [certificatePreviews, setCertificatePreviews] = useState<
     (Record<string, string> | null)[]
   >([]);
 
   const [submitted, setSubmitted] = useState<{ email: string } | null>(null);
+
+  const [openCertificateSection, setOpenCertificateSection] =
+    useState<boolean>(false);
 
   const {
     register,
@@ -95,58 +101,58 @@ export default function VendorRegistrationPage() {
       });
   };
 
-  const handleUploadFiles = async (file: File, type: "multiple" | "single") => {
-    try {
-      if (!file) return;
+  // const handleUploadFiles = async (file: File, type: "multiple" | "single") => {
+  //   try {
+  //     if (!file) return;
 
-      const response = await imagekitservice.generateAuthParams();
+  //     const response = await imagekitservice.generateAuthParams();
 
-      if (!response) {
-        throw new Error("Failed to get Imagekit auth params");
-      }
+  //     if (!response) {
+  //       throw new Error("Failed to get Imagekit auth params");
+  //     }
 
-      const authparams = response;
+  //     const authparams = response;
 
-      const uploadOptions = {
-        file,
-        fileName: file.name,
-        token: authparams.token,
-        signature: authparams.signature,
-        expire: Number(authparams.expire),
-        publicKey: config.publicKey,
-      };
+  //     const uploadOptions = {
+  //       file,
+  //       fileName: file.name,
+  //       token: authparams.token,
+  //       signature: authparams.signature,
+  //       expire: Number(authparams.expire),
+  //       publicKey: config.publicKey,
+  //     };
 
-      const res = await upload({ ...uploadOptions });
-      const imageUrl = res.url;
-      const fileId = res.fileId;
+  //     const res = await upload({ ...uploadOptions });
+  //     const imageUrl = res.url;
+  //     const fileId = res.fileId;
 
-      if (type === "multiple") handleImagePreview(file, "multiple", fileId!);
+  //     if (type === "multiple") handleImagePreview(file, "multiple", fileId!);
 
-      if (type === "single") handleImagePreview(file, "single", fileId!);
+  //     if (type === "single") handleImagePreview(file, "single", fileId!);
 
-      if (imageUrl && fileId && type === "multiple") {
-        setCertificates((prevs) => [
-          ...prevs,
-          {
-            url: imageUrl,
-            fileId: fileId,
-          },
-        ]);
-        return;
-      }
+  //     if (imageUrl && fileId && type === "multiple") {
+  //       setCertificates((prevs) => [
+  //         ...prevs,
+  //         {
+  //           url: imageUrl,
+  //           fileId: fileId,
+  //         },
+  //       ]);
+  //       return;
+  //     }
 
-      if (imageUrl && type === "single" && fileId) {
-        setPanVatCertificate({ url: imageUrl, fileId });
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        showToast.error(error.message);
-        return;
-      }
+  //     if (imageUrl && type === "single" && fileId) {
+  //       setPanVatCertificate({ url: imageUrl, fileId });
+  //     }
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       showToast.error(error.message);
+  //       return;
+  //     }
 
-      showToast.error("Failed to upload image");
-    }
-  };
+  //     showToast.error("Failed to upload image");
+  //   }
+  // };
 
   const handleFileDelete = async (fileId: string) => {
     if (!fileId) {
@@ -184,7 +190,7 @@ export default function VendorRegistrationPage() {
 
       vendorApply({
         ...values,
-        panVatCertificateUrl: panVatCertificate.url,
+        panVatCertificateUrl: panVatCertificate[0].url,
         certificates: certificates.map((c) => c.url) ?? undefined,
       });
 
@@ -192,7 +198,7 @@ export default function VendorRegistrationPage() {
       reset();
       setCertificatePreviews([]);
       setCertificates([]);
-      setPanVatCertificate(null);
+      setPanVatCertificate([]);
       setPanVatPreview(null);
     } catch (error) {
       console.log(error);
@@ -399,7 +405,7 @@ export default function VendorRegistrationPage() {
                   PAN/VAT certificate
                   <span className="text-rose-500 ml-0.5">*</span>
                 </label>
-                <FileUploadBox
+                {/* <FileUploadBox
                   label="Upload PAN/VAT certificate (PDF or image)"
                   previewUrl={panVatPreview ? panVatPreview.blob : ""}
                   onSelect={(file: File) => handleUploadFiles(file, "single")}
@@ -410,6 +416,11 @@ export default function VendorRegistrationPage() {
                     setPanVatCertificate(null);
                     setPanVatPreview(null);
                   }}
+                /> */}
+
+                <ReusableImageUploader
+                  images={panVatCertificate}
+                  onImagesChange={setPanVatCertificate}
                 />
               </div>
 
@@ -418,7 +429,7 @@ export default function VendorRegistrationPage() {
                   Organic Certified Certificate
                 </label>
                 <div className="space-y-2">
-                  {certificates.map((f, idx) => (
+                  {/* {certificates.map((f, idx) => (
                     <div
                       key={idx}
                       className="border border-slate-200 rounded-sm p-3"
@@ -449,12 +460,23 @@ export default function VendorRegistrationPage() {
                         </button>
                       </div>
                     </div>
-                  ))}
+                  ))} */}
 
-                  <label className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 cursor-pointer w-fit">
-                    <Plus className="w-4 h-4" />
-                    Add Organic Certified Certificate
-                    <input
+                  <ReusableImageUploader
+                    images={certificates}
+                    onImagesChange={setCertificates}
+                  />
+
+                  {/* <label
+                    className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 cursor-pointer w-fit"
+                    onClick={() => setOpenCertificateSection(true)}
+                  > */}
+                  {/* <div className="flex flex-col gap-y-3"> */}
+                  {/* <div className="flex gap-2 items-center">
+                        <Plus className="w-4 h-4" />
+                        Add Organic Certified Certificate
+                      </div> */}
+                  {/* <input
                       type="file"
                       accept="application/pdf,image/*"
                       className="hidden"
@@ -463,8 +485,17 @@ export default function VendorRegistrationPage() {
                         if (f) handleUploadFiles(f, "multiple");
                         e.target.value = "";
                       }}
-                    />
-                  </label>
+                    /> */}
+                  {/* {openCertificateSection && (
+                        <div>
+                          <ReusableImageUploader
+                            images={certificates}
+                            onImagesChange={setCertificates}
+                          />
+                        </div>
+                      )} */}
+                  {/* </div> */}
+                  {/* </label> */}
                 </div>
               </div>
             </div>
@@ -477,10 +508,10 @@ export default function VendorRegistrationPage() {
                 if (!submitted?.email) {
                   const fieldIds =
                     certificates.length > 0
-                      ? certificates.map((c) => c.fieldId)
+                      ? certificates.map((c) => c.fileId)
                       : [];
                   if (panVatCertificate)
-                    fieldIds.push(panVatCertificate.fieldId);
+                    fieldIds.push(panVatCertificate[0].fileId);
                   handleMultiplFileDelete(fieldIds);
                 }
                 navigate("/");
