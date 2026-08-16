@@ -5,7 +5,6 @@ import ReusablePills from "@/components/ReuseablePills";
 import { useToggleNotification } from "@/hooks/dashboard.queries";
 import { useNotifications } from "@/hooks/notification.queries";
 
-
 import { notificationMeta } from "@/types/notification/notification.meta";
 import type {
   INotification,
@@ -21,10 +20,8 @@ export default function NotificationsPage() {
   const markRead = useToggleNotification();
   const [activePill, setActivePill] = useState<FilterValue>("all");
 
-
   const [clientNotification, setClientNotification] =
     useState<INotification[]>(notifications);
-
 
   const pillsItems = useMemo(() => {
     const presentSubTypes = Array.from(
@@ -41,7 +38,6 @@ export default function NotificationsPage() {
     ];
   }, [clientNotification]);
 
-
   const visible = clientNotification.filter((n) => {
     if (activePill === "all") return true;
     if (activePill === "unread") {
@@ -54,7 +50,6 @@ export default function NotificationsPage() {
     markRead.mutate(
       { id },
       {
-    
         onError: () => {
           setClientNotification((prevs) =>
             prevs.map((p) => (p.id === id ? { ...p, isRead: !p.isRead } : p)),
@@ -69,7 +64,6 @@ export default function NotificationsPage() {
   };
 
   const handleRemove = (id: number) => {
-
     console.log("sdf");
     console.log(id);
     setClientNotification((prev) => prev.filter((p) => p.id !== id));
