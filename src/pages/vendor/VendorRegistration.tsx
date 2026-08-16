@@ -20,6 +20,7 @@ import {
   VerifyEmailDialog,
 } from "./RegistrationSuccessDialog";
 import { showToast } from "@/components/ReactToast";
+import Motion from "@/components/motion/Motion";
 
 export default function VendorRegistrationPage() {
   const navigate = useNavigate();
@@ -139,25 +140,23 @@ export default function VendorRegistrationPage() {
       }
     } catch (error) {
       if (error instanceof Error) {
-       
         showToast.error(error.message);
         return;
       }
-      
+
       showToast.error("Failed to upload image");
     }
   };
 
   const handleFileDelete = async (fileId: string) => {
     if (!fileId) {
-      
       showToast.error("File id is Required !");
       return;
     }
 
     try {
       await imagekitservice.deleteFile(fileId);
-      
+
       showToast.success("File deleted successfully");
     } catch {
       console.log("Failed to delete file !");
@@ -189,8 +188,6 @@ export default function VendorRegistrationPage() {
         certificates: certificates.map((c) => c.url) ?? undefined,
       });
 
-     
-
       showToast.success("Registration Form", "Registration Form Submitted.");
       reset();
       setCertificatePreviews([]);
@@ -212,25 +209,29 @@ export default function VendorRegistrationPage() {
   return (
     <div className="min-h-screen bg-amber-50 text-slate-900 font-sans">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 py-6">
-        <Link to="/">
-          <div className="flex items-center gap-3 mb-8">
-            <span className="text-3xl">🌿</span>
+        <Motion>
+          <Link to="/">
+            <div className="flex items-center gap-3 mb-8">
+              <span className="text-3xl">🌿</span>
 
-            <h2 className="text-2xl font-semibold tracking-wider text-black">
-              FreshMart
-            </h2>
+              <h2 className="text-2xl font-semibold tracking-wider text-black">
+                FreshMart
+              </h2>
+            </div>
+          </Link>
+        </Motion>
+
+        <Motion>
+          <div className="mb-6 ">
+            <h1 className="text-xl font-semibold text-slate-900">
+              Become a vendor
+            </h1>
+            <p className="text-sm text-slate-500 mt-1">
+              Tell us about your farm. Our team reviews every application and
+              verifies your PAN/VAT certificate before approval.
+            </p>
           </div>
-        </Link>
-
-        <div className="mb-6 ">
-          <h1 className="text-xl font-semibold text-slate-900">
-            Become a vendor
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Tell us about your farm. Our team reviews every application and
-            verifies your PAN/VAT certificate before approval.
-          </p>
-        </div>
+        </Motion>
 
         {submitted && (
           <div className="mb-6 flex items-start gap-2.5 rounded-sm border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-primary">
