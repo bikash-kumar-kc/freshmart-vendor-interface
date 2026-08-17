@@ -1,6 +1,10 @@
 import type { IColumn } from "@/pages/products/ReuseableTable";
 import { useParams, useLocation } from "react-router-dom";
-import { useDisplayOrderDetail } from "../../../lib/tanstackquery/displayOrders/hook";
+import {
+  useCancelDisplayOrder,
+  useDisplayOrderDetail,
+  useUpdateDisplayOrderStatus,
+} from "../../../lib/tanstackquery/displayOrders/hook";
 import type {
   DisplayOrderStatus,
   IDisplayOrderDetailItem,
@@ -11,6 +15,16 @@ import DisplayOrderStatusBadge from "../../../components/DisplayOrderStatusBadge
 import PageHeading from "@/components/PagingHeading";
 import PaymentStatusBadge from "@/components/PaymentStatusBadge";
 import ResponseCountdownBadge from "@/components/ResponseCountdownBadge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  DISPLAY_ORDER_STATUS_LABEL,
+  DISPLAY_ORDER_TRANSITIONS,
+} from "@/lib/constants/display-order.constants";
 
 const columns: IColumn[] = [
   { id: "productName", label: "Product", align: "left" },
@@ -19,6 +33,7 @@ const columns: IColumn[] = [
   { id: "quantity", label: "Quantity", align: "right", width: "110px" },
   { id: "pricePerUnit", label: "Price / Unit", align: "right", width: "140px" },
   { id: "total", label: "Total", align: "right", width: "140px" },
+  { id: "action", label: "Action", align: "center", width: "150px" },
 ];
 
 const formatCurrency = (value: number) =>
@@ -28,11 +43,12 @@ export default function OrderDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
 
-  // These come through route state from the list page's "View Details" click,
-  // so the heading renders immediately without waiting on the detail fetch.
   const passedState = location.state as
     | { orderId?: string; email?: string }
     | undefined;
+
+  const cancelMutation = useCancelDisplayOrder();
+  const updateStatusMutation = useUpdateDisplayOrderStatus();
 
   const { data: order, isLoading } = useDisplayOrderDetail(id!);
 
@@ -49,35 +65,88 @@ export default function OrderDetailsPage() {
     0,
   );
 
-  const renderRow = (item: IDisplayOrderDetailItem) => (
-    <>
-      <td className="px-4 py-3">
-        <p className="font-medium text-gray-800">{item.productName}</p>
-        {item.localName && (
-          <p className="text-xs text-gray-400">{item.localName}</p>
-        )}
-      </td>
-      <td className="px-4 py-3 text-gray-700">
-        {item.productVariantId ?? "—"}
-      </td>
-      <td className="px-4 py-3 text-gray-700">
-        {/* {(item.weightValue + "/" + item.weightUnit) ?? "—"} */}
-        {item.weightUnit && item.weightValue
-          ? item.weightValue + "/" + item.weightUnit
-          : "-"}
-      </td>
-      <td className="px-4 py-3 text-right font-medium text-gray-700">
-        {item.quantity}
-      </td>
-      <td className="px-4 py-3 text-right text-gray-500">
-        {formatCurrency(item.price)}
-      </td>
-      <td className="px-4 py-3 text-right font-medium text-gray-700">
-        {formatCurrency(item.price * item.quantity)}
-      </td>
-    </>
-  );
+  const renderRow = (item: IDisplayOrderDetailItem) => {
+    console.log(item);
+    const nextStatuses =
+      DISPLAY_ORDER_TRANSITIONS[order.displayOrderStatus as DisplayOrderStatus];
+    const canCancel = item.displayOrderStatus === "pending";
+    const canUpdate = nextStatuses.length > 0;
 
+    return (
+      <>
+        <td className="px-4 py-3">
+          <p className="font-medium text-gray-800">{item.productName}</p>
+          {item.localName && (
+            <p className="text-xs text-gray-400">{item.localName}</p>
+          )}
+        </td>
+        <td className="px-4 py-3 text-gray-700">
+          {item.productVariantId ?? "—"}
+        </td>
+        <td className="px-4 py-3 text-gray-700">
+          {/* {(item.weightValue + "/" + item.weightUnit) ?? "—"} */}
+          {item.weightUnit && item.weightValue
+            ? item.weightValue + "/" + item.weightUnit
+            : "-"}
+        </td>
+        <td className="px-4 py-3 text-right font-medium text-gray-700">
+          {item.quantity}
+        </td>
+        <td className="px-4 py-3 text-right text-gray-500">
+          {formatCurrency(item.price)}
+        </td>
+        <td className="px-4 py-3 text-right font-medium text-gray-700">
+          {formatCurrency(item.price * item.quantity)}
+        </td>
+        <td className="px-4 py-3 text-center flex gap-2 justify-center items-center">
+          {canCancel && (
+            <button
+              onClick={() => cancelMutation.mutate(item.orderId)}
+              disabled={cancelMutation.isPending}
+              className="px-1.5 py-1.5 rounded-sm text-xs font-semibold border border-red-300 text-red-600 bg-red-50 hover:bg-red-600 hover:text-white transition-colors disabled:opacity-50"
+            >
+              Cancel {canCancel && canUpdate ? "" : " Order"}
+            </button>
+          )}
+          {canUpdate && (
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <button
+                  disabled={updateStatusMutation.isPending}
+                  className="px-3 py-1.5 rounded-sm text-xs font-semibold border border-green-500 text-green-700 bg-green-50 hover:bg-green-700 hover:text-white transition-colors disabled:opacity-50"
+                >
+                  Update {canCancel && canUpdate ? "" : " Status"}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className={
+                  "rounded-sm bg-white shadow-lg px-3 py-2 flex flex-col gap-2"
+                }
+              >
+                {nextStatuses.map((next) => (
+                  <DropdownMenuItem
+                    key={next}
+                    onClick={() =>
+                      updateStatusMutation.mutate({
+                        orderId: item.orderId,
+                        payload: { status: next },
+                      })
+                    }
+                  >
+                    Mark as {DISPLAY_ORDER_STATUS_LABEL[next]}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          {!canCancel && !canUpdate && (
+            <span className="text-xs text-gray-400">—</span>
+          )}
+        </td>
+      </>
+    );
+  };
   return (
     <main className="p-4 sm:p-6 lg:p-8 bg-background min-h-screen">
       <PageHeading
