@@ -1,3 +1,4 @@
+import { Args } from "./../../../node_modules/openapi-op/dist/types.d";
 import type {
   IAuthUser,
   IGetCurrentUserResponse,
@@ -9,6 +10,7 @@ import type {
 import { api } from "../axios";
 // import { toast } from "@/components/ui/toast";
 import { showToast } from "@/components/ReactToast";
+import { auth, vendor } from "@/lib/openapi-op/endpoints";
 
 class AuthServices {
   // vendor register/apply.......
@@ -23,6 +25,7 @@ class AuthServices {
   // vendor login...
   async login(payload: ILoginPayload) {
     const { data } = await api.post<ILoginResponse>("/auth/login", payload);
+    const venodorQuotation = await auth.post();
     return data;
   }
 
@@ -46,7 +49,6 @@ class AuthServices {
   // vendor verify otp...
   async verifyOtp(data: { email: string; otp: string }) {
     if (!data.email || !data.otp) {
-
       showToast.error("Data missing", "Email or otp is missing ");
     }
     return await api.post("/vendor/otp/verify", { ...data });
@@ -55,8 +57,6 @@ class AuthServices {
   // vendor ask for otp again...
   async resendOtp(data: { email: string }) {
     if (!data.email) {
-
-
       showToast.error("Data missing", "Email or otp is missing ");
     }
 
