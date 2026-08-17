@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Package, FileSpreadsheet, Truck, ShoppingCart, type LucideProps } from "lucide-react";
+import {
+  Package,
+  FileSpreadsheet,
+  Truck,
+  ShoppingCart,
+  type LucideProps,
+} from "lucide-react";
 
 import StatCard from "../../components/StatCard";
 import NotificationCard from "../../components/NotificationCard";
@@ -13,7 +19,12 @@ import MotionStagger from "@/components/motion/MotionStagger";
 import Motion from "@/components/motion/Motion";
 import { statCards } from "./constant";
 
-const iconMap:Record<string,React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>> = { Package, ShoppingCart, FileSpreadsheet, Truck };
+const iconMap: Record<
+  string,
+  React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >
+> = { Package, ShoppingCart, FileSpreadsheet, Truck };
 
 export default function Dashboard() {
   const { user } = useAuthContext();

@@ -39,7 +39,6 @@ function RegistrationSuccessDialog({
         className="
           sm:max-w-md
           rounded-sm
-          border-primary/20
           bg-amber-50
           [&_[data-slot='dialog-close']]:transition-colors
           [&_[data-slot='dialog-close']]:rounded-sm
@@ -49,11 +48,12 @@ function RegistrationSuccessDialog({
           shadow-lg
           transition-shadow duration-200
           hover:shadow-xl
+          outline-none
         "
       >
         <DialogHeader>
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-            <CheckCircle2 className="h-8 w-8 text-primary" />
+            <CheckCircle2 className="h-8 w-8 text-green-500" />
           </div>
 
           <DialogDescription className="mt-1 mb-3 text-center text-gray-500 leading-1 tracking-wider text-[13px]">

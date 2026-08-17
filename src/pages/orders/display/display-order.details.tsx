@@ -66,10 +66,9 @@ export default function OrderDetailsPage() {
   );
 
   const renderRow = (item: IDisplayOrderDetailItem) => {
-    console.log(item);
     const nextStatuses =
       DISPLAY_ORDER_TRANSITIONS[order.displayOrderStatus as DisplayOrderStatus];
-    const canCancel = item.displayOrderStatus === "pending";
+    const canCancel = order.displayOrderStatus === "pending";
     const canUpdate = nextStatuses.length > 0;
 
     return (
