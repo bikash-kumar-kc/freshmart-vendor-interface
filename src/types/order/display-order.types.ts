@@ -1,6 +1,9 @@
-
-export type DisplayOrderStatus = 'pending' | 'processing' | 'delivered' | 'cancelled';
-export type WeightUnit = 'g' | 'kg' | 'l' | 'ml';
+export type DisplayOrderStatus =
+  | "pending"
+  | "processing"
+  | "delivered"
+  | "cancelled";
+export type WeightUnit = "g" | "kg" | "l" | "ml";
 
 export interface IDisplayOrderItem {
   productId: string;
@@ -18,9 +21,9 @@ export interface IDisplayOrderListItem {
   userId: string;
   email: string;
   displayOrderStatus: DisplayOrderStatus;
-  type: 'display';
+  type: "display";
   isPayment: boolean;
-  createdAt: string; 
+  createdAt: string;
   items: IDisplayOrderItem[];
 }
 
@@ -37,7 +40,7 @@ export interface IDisplayOrderListParams {
   page?: number;
   limit?: number;
   search?: string;
-  status?: DisplayOrderStatus | 'all';
+  status?: DisplayOrderStatus | "all";
 }
 
 // Detail response — separate shape per your sample
@@ -55,13 +58,14 @@ export interface IDisplayOrderDetailItem {
   weightValue: number;
   weightUnit: WeightUnit;
   productVariantId: string | null;
+  displayOrderStatus: DisplayOrderStatus;
 }
 
 export interface IDisplayOrderDetail {
   id: string;
   createdAt: string;
   isPayment: boolean;
-  type: 'inventory' | 'display';
+  type: "inventory" | "display";
   userId: string;
   displayOrderStatus: DisplayOrderStatus | null;
   items: IDisplayOrderDetailItem[];
