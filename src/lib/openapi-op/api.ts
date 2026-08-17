@@ -5,11 +5,14 @@
 
 import { createClient } from "openapi-op";
 import type { paths } from "./schema";
+import Cookies from "js-cookie";
 
 export { ApiError } from "openapi-op";
 
 export const { api, op } = createClient<paths>({
-  baseUrl: () => process.env.API_ORIGIN ?? "http://localhost:8000",
+  baseUrl: () => "http://localhost:8000",
   prefix: "/api/v1",
-  // headers: async () => ({ authorization: `Bearer ${await token()}` }),
+  headers: async () => ({
+    authorization: `Bearer ${Cookies.get("accessToken")}`
+  }),
 });

@@ -1,4 +1,4 @@
-import { Args } from "./../../../node_modules/openapi-op/dist/types.d";
+// import { Args } from "./../../../node_modules/openapi-op/dist/types.d";
 import type {
   IAuthUser,
   IGetCurrentUserResponse,
@@ -24,9 +24,17 @@ class AuthServices {
 
   // vendor login...
   async login(payload: ILoginPayload) {
-    const { data } = await api.post<ILoginResponse>("/auth/login", payload);
-    const venodorQuotation = await auth.post();
-    return data;
+    // const { data } = await api.post<ILoginResponse>("/auth/login", payload);
+    const args = {
+      body: {
+        ...payload,
+      },
+    };
+    const venodorQuotation =
+      await auth.loginForUserVendorOrAdminRoleDeterminedByTheAccount(args);
+    console.log(venodorQuotation);
+    return venodorQuotation
+    // return data;
   }
 
   // vendor logout...

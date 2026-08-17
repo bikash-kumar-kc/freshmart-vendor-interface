@@ -48,7 +48,8 @@ const Login = () => {
     try {
       await vendorLogin(data);
       showToast.success("LogIn Successfully");
-    } catch {
+    } catch (error) {
+      console.log(error);
       showToast.error("Failed to LogIn");
     }
   };

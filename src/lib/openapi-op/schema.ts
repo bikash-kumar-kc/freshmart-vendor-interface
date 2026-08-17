@@ -1206,11 +1206,14 @@ export interface operations {
             };
         };
         responses: {
-            201: {
+            /** @description Login successful */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["LoginDto"];
+                };
             };
         };
     };

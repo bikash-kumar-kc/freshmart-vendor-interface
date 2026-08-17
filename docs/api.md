@@ -17,7 +17,7 @@ reach them as `Schema<"MemberOut">` from `api-types.ts`.
 | Method | Path | Query | Request | → | Response |
 | --- | --- | --- | --- | --- | --- |
 | POST | `/api/v1/auth/setup-account` | — | `SetupAccountDto` | 201 | — |
-| POST | `/api/v1/auth/login` | — | `LoginDto` | 201 | — |
+| POST | `/api/v1/auth/login` | — | `LoginDto` | 200 | `LoginDto` |
 | POST | `/api/v1/auth/refresh` | — | — | 201 | — |
 | POST | `/api/v1/auth/logout` | — | — | 201 | — |
 | GET | `/api/v1/auth` | — | — | 200 | — |
