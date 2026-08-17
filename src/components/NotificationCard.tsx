@@ -4,8 +4,8 @@ import {
   getReferenceRoute,
   notificationMeta,
 } from "../types/notification/notification.meta";
-import { formatDistanceToNow } from "date-fns";
 import type { INotification } from "@/types/notification/notification.type";
+import { calculateRelativeTime } from "@/lib/calculateRelativeTime";
 
 interface NotificationCardProps {
   notification: INotification;
@@ -85,9 +85,11 @@ export default function NotificationCard({
 
           <span className="ml-auto flex items-center gap-1 text-xs text-slate-400 shrink-0">
             <Clock className="w-3 h-3" />
-            {formatDistanceToNow(new Date(notification.createdAt), {
+            {/* {formatDistanceToNow(new Date(notification.createdAt), {
               addSuffix: true,
-            })}
+            })} */}
+
+            {calculateRelativeTime(notification.createdAt)}
           </span>
         </div>
       </div>
