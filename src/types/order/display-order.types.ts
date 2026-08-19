@@ -24,7 +24,7 @@ export interface IDisplayOrderListItem {
   type: "display";
   isPayment: boolean;
   createdAt: string;
-  items: IDisplayOrderItem[];
+  // items: IDisplayOrderItem[];
 }
 
 export interface IDisplayOrderListResponse {
