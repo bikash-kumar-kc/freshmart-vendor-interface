@@ -425,9 +425,14 @@ export default function VendorRegistrationPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Organic Certified Certificate
-                </label>
+                <div className="mb-2">
+                  <label className="block text-sm font-medium text-slate-700">
+                    Organic Certified Certificate
+                  </label>
+                  <p className="block text-[10px]  text-slate-500">
+                    Upload single file at time
+                  </p>
+                </div>
                 <div className="space-y-2">
                   {/* {certificates.map((f, idx) => (
                     <div
