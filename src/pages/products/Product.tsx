@@ -37,7 +37,7 @@ import { useUpdateProductListing } from "@/lib/tanstackquery/productlisting/useU
 import { showToast } from "@/components/ReactToast";
 
 const inputClass =
-  "w-full  border border-slate-200 rounded-lg px-3 py-[11px] text-sm text-slate-800 outline-none focus:border-[#3B6D11] placeholder:text-slate-400 bg-gray-50";
+  "w-full  border border-slate-200 rounded-lg px-3 py-[11px] text-sm text-slate-800 outline-none focus:border-[#3B6D11] placeholder:text-slate-400 bg-green-50";
 const errorInputClass =
   "w-full bg-white border border-rose-300 rounded-lg px-3 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-rose-500/20 placeholder:text-slate-400";
 const selectItemClass =
@@ -309,7 +309,7 @@ export default function AddProductPage() {
                     searchPlaceholder="Search products..."
                     loading={productNamesLoading}
                     hasError={!!errors.productId}
-                    className=" text-base bg-gray-50 border-2 border-gray-300 rounded-md w-full"
+                    className=" text-bas border-2 border-gray-300 rounded-md w-full"
                     contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
                     initialValue={productListingDetails?.productId}
                   />
@@ -330,7 +330,7 @@ export default function AddProductPage() {
                 >
                   <Select value={field.value} onValueChange={field.onChange} >
                     <SelectTrigger
-                      className="h-11 w-full  rounded-md border-2 border-gray-300 bg-gray-50 px-3.5 py-5 text-sm text-gray-800
+                      className="h-11 w-full  rounded-md border-2 border-gray-300 bg-green-50 px-3.5 py-5 text-sm text-gray-800
       transition-colors hover:border-gray-400 data-[placeholder]:text-gray-400"
                     >
                       <SelectValue placeholder="Select listing type" />
@@ -393,7 +393,7 @@ export default function AddProductPage() {
                     searchPlaceholder="Search categories..."
                     loading={categoriesLoading}
                     hasError={!!errors.categoryId}
-                    className=" text-base bg-gray-50 border-2 border-gray-300 rounded-md lg:w-100"
+                    className=" text-base border-2 border-gray-300 rounded-md lg:w-100"
                     contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
                     initialValue={productListingDetails?.categoryId}
                   />
@@ -583,7 +583,7 @@ export default function AddProductPage() {
                           searchPlaceholder="Search units..."
                           loading={measurementLoading}
                           hasError={!!errors.variants?.[idx]?.measurementId}
-                          className=" text-base bg-gray-50 border-2 border-gray-300 rounded-md lg:w-100"
+                          className=" text-base border-2 border-gray-300 rounded-md lg:w-100"
                           contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
                         />
                       )}
