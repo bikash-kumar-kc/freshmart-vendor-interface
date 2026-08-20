@@ -309,7 +309,7 @@ export default function AddProductPage() {
                     searchPlaceholder="Search products..."
                     loading={productNamesLoading}
                     hasError={!!errors.productId}
-                    className=" text-bas border-2 border-gray-300 rounded-md w-full"
+                    className=" text-bas border-slate-200 rounded-md w-full"
                     contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
                     initialValue={productListingDetails?.productId}
                   />
@@ -330,7 +330,7 @@ export default function AddProductPage() {
                 >
                   <Select value={field.value} onValueChange={field.onChange} >
                     <SelectTrigger
-                      className="h-11 w-full  rounded-md border-2 border-gray-300 bg-green-50 px-3.5 py-5 text-sm text-gray-800
+                      className="h-11 w-full  rounded-md border-slate-200 bg-green-50 px-3.5 py-5 text-sm text-gray-800
       transition-colors hover:border-gray-400 data-[placeholder]:text-gray-400"
                     >
                       <SelectValue placeholder="Select listing type" />
@@ -393,7 +393,7 @@ export default function AddProductPage() {
                     searchPlaceholder="Search categories..."
                     loading={categoriesLoading}
                     hasError={!!errors.categoryId}
-                    className=" text-base border-2 border-gray-300 rounded-md lg:w-100"
+                    className=" text-base border-slate-200 rounded-md lg:w-100"
                     contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
                     initialValue={productListingDetails?.categoryId}
                   />
@@ -487,7 +487,7 @@ export default function AddProductPage() {
                     searchPlaceholder="Search packaging..."
                     loading={packagingLoading}
                     hasError={!!errors.packagingTypeId}
-                    className=" text-base  border-2 border-gray-300 rounded-md lg:w-100"
+                    className=" text-base  border-slate-200 rounded-md lg:w-100"
                     contentClassName=" border-gray-300 lg:w-[400px]"
                     initialValue={productListingDetails?.packagingTypeId}
                   />
@@ -583,7 +583,7 @@ export default function AddProductPage() {
                           searchPlaceholder="Search units..."
                           loading={measurementLoading}
                           hasError={!!errors.variants?.[idx]?.measurementId}
-                          className=" text-base border-2 border-gray-300 rounded-md lg:w-100"
+                          className=" text-base border-slate-200 rounded-md lg:w-100"
                           contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
                         />
                       )}
