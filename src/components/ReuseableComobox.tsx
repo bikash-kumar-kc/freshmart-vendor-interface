@@ -46,6 +46,7 @@ export default function ReusableCombobox({
 }: ReusableComboboxProps) {
   const [open, setOpen] = useState(false);
   const selected = items.find((item) => item.id === value);
+  console.log(value);
 
   useEffect(() => {
     if (initialValue) {
@@ -76,7 +77,7 @@ export default function ReusableCombobox({
         className={cn(
           "w-[--radix-popover-trigger-width] p-0 bg-white",
           contentClassName,
-          " outline-none border border-green-400 shadow-lg",
+          "  shadow-lg border-none!",
         )}
         align="start"
       >
@@ -88,25 +89,29 @@ export default function ReusableCombobox({
           <CommandList className="scrollbar-green">
             <CommandEmpty>{emptyText}</CommandEmpty>
             <CommandGroup>
-              {items.map((item) => (
-                <CommandItem
-                  key={item.id}
-                  value={item.label}
-                  onSelect={() => {
-                    onChange(item.id);
-                    setOpen(false);
-                  }}
-                  className={cn(
-                    value === item.id ? "bg-green-500 text-white" : "",
-                    value === item.id
-                      ? ""
-                      : "hover:bg-green-400 hover:text-white",
-                    "mt-1",
-                  )}
-                >
-                  {item.label}
-                </CommandItem>
-              ))}
+              {items.map((item) => {
+                console.log(value === item.id);
+                const isSelected = value === item.id;
+                return (
+                  <CommandItem
+                    key={item.id}
+                    value={item.label}
+                    onSelect={() => {
+                      onChange(item.id);
+                      setOpen(false);
+                    }}
+                    className={cn(
+                      isSelected && "!bg-green-900 !text-white",
+                      // value === item.id
+                      //   ? ""
+                      //   : "hover:bg-green-400 hover:text-white",
+                      // "mt-1",
+                    )}
+                  >
+                    {item.label}
+                  </CommandItem>
+                );
+              })}
             </CommandGroup>
           </CommandList>
         </Command>
