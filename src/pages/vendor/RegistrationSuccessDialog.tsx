@@ -37,18 +37,20 @@ function RegistrationSuccessDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         className="
+        py-3
           sm:max-w-md
-          rounded-sm
+          rounded-[10px]
           bg-amber-50
           [&_[data-slot='dialog-close']]:transition-colors
           [&_[data-slot='dialog-close']]:rounded-sm
           [&_[data-slot='dialog-close']:hover]:bg-rose-50
           [&_[data-slot='dialog-close']:hover]:text-rose-500
           border-none
-          shadow-lg
+          shadow-sm
           transition-shadow duration-200
           hover:shadow-xl
           outline-none
+
         "
       >
         <DialogHeader>
@@ -64,7 +66,7 @@ function RegistrationSuccessDialog({
         </DialogHeader>
 
         <Button
-          className="w-full rounded-sm bg-green-600 transition-all duration-200 hover:bg-green-400  hover:shadow-md py-6 text-white tracking-wider"
+          className="w-full rounded-[10px] bg-green-600 transition-all duration-200 hover:bg-green-400  hover:shadow-md py-6 text-white tracking-wider"
           onClick={onVerifyClick}
         >
           Verify Email
@@ -134,13 +136,13 @@ function VerifyEmailDialog({
 
         if (status === 400) {
           setOtp("");
-          
+
           showToast.error("OTP not matched.");
         }
 
         if (status === 429) {
           setRateLimit(true);
-          
+
           showToast.warning(
             "Rate Limit Hit",
             "You have to wait a few minutes before trying again !",
@@ -182,9 +184,9 @@ function VerifyEmailDialog({
       <DialogContent
         className="
           sm:max-w-md
-          rounded-lg
+          rounded-[10px]
           border-none
-          shadow-lg
+          shadow-sm
           transition-shadow
           duration-200
           hover:shadow-xl
@@ -197,7 +199,7 @@ function VerifyEmailDialog({
         "
       >
         <DialogHeader className="space-y-3">
-          <DialogTitle className="text-center text-2xl font-semibold tracking-wider text-gray-900">
+          <DialogTitle className="text-center text-2xl font-semibold tracking-wider text-gray-700">
             Verify your email
           </DialogTitle>
 
@@ -222,18 +224,13 @@ function VerifyEmailDialog({
     h-12
     w-12
     border
-    rounded-sm
+    rounded-[10px]
     bg-primary/5
     text-lg
     text-primary
     transition-all
     duration-200
     outline-none
-    ring-0
-    focus:ring-0
-    focus-visible:ring-0
-    focus:outline-none
-    focus-visible:outline-none
     data-[active=true]:border-green-400
   "
                 />
@@ -252,54 +249,55 @@ function VerifyEmailDialog({
             : `Expires in ${formatTime(secondsLeft)}`}
         </p>
 
-        <Button
-          className="
+        <div className="w-full flex gap-2 items-center">
+          <Button
+            className="
             h-12
-            w-full
-            rounded-sm
+            rounded-[10px]
             bg-green-600
             text-base
             font-medium
-            tracking-wide
+            tracking-wider
             text-white
             transition-all
             duration-200
             hover:bg-green-400
             hover:shadow-md
             disabled:opacity-60
+            flex-1
           "
-          disabled={rateLimit || isExpired || otp.length < 6}
-          onClick={handleVerify}
-        >
-          Verify OTP
-        </Button>
+            disabled={rateLimit || isExpired || otp.length < 6}
+            onClick={handleVerify}
+          >
+            Verify OTP
+          </Button>
 
-        {canResend ? (
-          <Button
-            className="
-              mt-2
+          {!canResend && (
+            <Button
+              className="
               h-12
-              w-full
-              
-              rounded-sm
+              flex-1
+              rounded-[10px]
               bg-cta
               text-base
               font-medium
-              tracking-wide
-              bg-blue-600
-              text-white
-              transition-all
               duration-200
-              hover:bg-blue-400
-              hover:shadow-md
+              hover:border-gray-400
               disabled:opacity-60
+              border
+              text-gray-700
+              border-gray-200
+              tracking-wider
+              transition-colors
             "
-            disabled={rateLimit}
-            onClick={handleResend}
-          >
-            Resend OTP
-          </Button>
-        ) : (
+              disabled={rateLimit}
+              onClick={handleResend}
+            >
+              Resend OTP
+            </Button>
+          )}
+        </div>
+        {!canResend && (
           <p className="mt-2 text-center text-xs text-gray-400">
             You can resend in {formatTime(resendCooldown)}
           </p>
