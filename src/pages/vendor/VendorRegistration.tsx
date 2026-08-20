@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FileText, X, CheckCircle2, Plus } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import useVendorReigistration from "@/lib/tanstackquery/queryHook/useVendorReigistration";
 import {
   vendorRegistrationSchema,
@@ -11,10 +11,10 @@ import {
 import { SectionCard } from "@/components/reuseableComponents/SectionCard";
 import { Field } from "@/components/reuseableComponents/Field";
 import { getInputClass } from "@/lib/reuseablestyle/reuseablestyle";
-import { FileUploadBox } from "@/components/reuseableComponents/FileUpload";
+// import { FileUploadBox } from "@/components/reuseableComponents/FileUpload";
 import imagekitservice from "@/api/imagekit/imagekit";
-import { upload } from "@imagekit/react";
-import { config } from "@/config/config";
+// import { upload } from "@imagekit/react";
+// import { config } from "@/config/config";
 import {
   RegistrationSuccessDialog,
   VerifyEmailDialog,
@@ -44,20 +44,20 @@ export default function VendorRegistrationPage() {
   const [panVatCertificate, setPanVatCertificate] = useState<IUploadedImage[]>(
     [],
   );
-  const [panVatPreview, setPanVatPreview] = useState<Record<
-    string,
-    string
-  > | null>(null);
+  // const [panVatPreview, setPanVatPreview] = useState<Record<
+  //   string,
+  //   string
+  // > | null>(null);
 
   const [certificates, setCertificates] = useState<IUploadedImage[]>([]);
-  const [certificatePreviews, setCertificatePreviews] = useState<
-    (Record<string, string> | null)[]
-  >([]);
+  // const [certificatePreviews, setCertificatePreviews] = useState<
+  //   (Record<string, string> | null)[]
+  // >([]);
 
   const [submitted, setSubmitted] = useState<{ email: string } | null>(null);
 
-  const [openCertificateSection, setOpenCertificateSection] =
-    useState<boolean>(false);
+  // const [openCertificateSection, setOpenCertificateSection] =
+  //   useState<boolean>(false);
 
   const {
     register,
@@ -68,38 +68,38 @@ export default function VendorRegistrationPage() {
     resolver: zodResolver(vendorRegistrationSchema),
   });
 
-  async function removeCertificate(fileId: string) {
-    await handleFileDelete(fileId);
-    setCertificates((prev) => prev.filter((f) => f.fileId !== fileId));
-    setCertificatePreviews((prev) =>
-      prev
-        ? prev.filter(
-            (f) => (f as { blob: string; fileId: string }).fileId !== fileId,
-          )
-        : prev,
-    );
-  }
+  // async function removeCertificate(fileId: string) {
+  //   await handleFileDelete(fileId);
+  //   setCertificates((prev) => prev.filter((f) => f.fileId !== fileId));
+  //   setCertificatePreviews((prev) =>
+  //     prev
+  //       ? prev.filter(
+  //           (f) => (f as { blob: string; fileId: string }).fileId !== fileId,
+  //         )
+  //       : prev,
+  //   );
+  // }
 
-  const handleImagePreview = (
-    file: File,
-    type: "multiple" | "single",
-    fileId: string,
-  ) => {
-    if (type === "multiple" && file.type.startsWith("image/"))
-      setCertificatePreviews((prev) => [
-        ...prev,
-        {
-          blob: URL.createObjectURL(file),
-          fileId: fileId,
-        },
-      ]);
+  // const handleImagePreview = (
+  //   file: File,
+  //   type: "multiple" | "single",
+  //   fileId: string,
+  // ) => {
+  //   if (type === "multiple" && file.type.startsWith("image/"))
+  //     setCertificatePreviews((prev) => [
+  //       ...prev,
+  //       {
+  //         blob: URL.createObjectURL(file),
+  //         fileId: fileId,
+  //       },
+  //     ]);
 
-    if (type === "single" && file.type.startsWith("image/"))
-      setPanVatPreview({
-        blob: URL.createObjectURL(file),
-        fileId: fileId,
-      });
-  };
+  //   if (type === "single" && file.type.startsWith("image/"))
+  //     setPanVatPreview({
+  //       blob: URL.createObjectURL(file),
+  //       fileId: fileId,
+  //     });
+  // };
 
   // const handleUploadFiles = async (file: File, type: "multiple" | "single") => {
   //   try {
@@ -154,20 +154,20 @@ export default function VendorRegistrationPage() {
   //   }
   // };
 
-  const handleFileDelete = async (fileId: string) => {
-    if (!fileId) {
-      showToast.error("File id is Required !");
-      return;
-    }
+  // const handleFileDelete = async (fileId: string) => {
+  //   if (!fileId) {
+  //     showToast.error("File id is Required !");
+  //     return;
+  //   }
 
-    try {
-      await imagekitservice.deleteFile(fileId);
+  //   try {
+  //     await imagekitservice.deleteFile(fileId);
 
-      showToast.success("File deleted successfully");
-    } catch {
-      console.log("Failed to delete file !");
-    }
-  };
+  //     showToast.success("File deleted successfully");
+  //   } catch {
+  //     console.log("Failed to delete file !");
+  //   }
+  // };
 
   const handleMultiplFileDelete = async (fileIds: string[]) => {
     if (fileIds.length === 0) {
@@ -196,10 +196,10 @@ export default function VendorRegistrationPage() {
 
       showToast.success("Registration Form", "Registration Form Submitted.");
       reset();
-      setCertificatePreviews([]);
+      // setCertificatePreviews([]);
       setCertificates([]);
       setPanVatCertificate([]);
-      setPanVatPreview(null);
+      // setPanVatPreview(null);
     } catch (error) {
       console.log(error);
     }
@@ -510,7 +510,7 @@ export default function VendorRegistrationPage() {
             <button
               type="button"
               onClick={() => {
-                if (!submitted?.email) {
+                if (certificates.length > 0 && !submitted?.email) {
                   const fieldIds =
                     certificates.length > 0
                       ? certificates.map((c) => c.fileId)
