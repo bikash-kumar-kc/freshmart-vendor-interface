@@ -144,7 +144,7 @@ export default function ReusableImageUploader({
         </div>
       ))}
 
-      <label className="w-24 h-24 rounded-xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#3B6D11] hover:border-[#3B6D11] cursor-pointer transition-colors">
+      <label className="w-24 h-24 rounded-xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-[#3B6D11] hover:border-[#3B6D11] cursor-pointer bg-green-50 transition-colors">
         <UploadCloud className="w-5 h-5" />
         <span className="text-[10px]">{label}</span>
         <input
