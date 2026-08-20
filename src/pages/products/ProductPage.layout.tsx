@@ -193,7 +193,7 @@ export default function ProductsPage() {
               value={search}
               onChange={(e) => handleSearchChange(e.target.value)}
               placeholder="Search by product name or ID"
-              className="w-full bg-white border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-green-500 focus:border-primary"
+              className="w-full bg-green-50 border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm outline-none focus:ring-1 focus:ring-green-500 focus:border-primary"
             />
           </div>
         </div>

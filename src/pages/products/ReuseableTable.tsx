@@ -97,7 +97,7 @@ export default function ReusableTable<T>({
                         idx={idx}
                         isWindowView={false}
                         onClick={() => renderExpanded && toggleExpanded(key)}
-                        className="hover:bg-gray-50 cursor-pointer"
+                        className="hover:bg-green-50 cursor-pointer"
                       >
                         {renderRow(item,idx)}
                       </MotionStagger>

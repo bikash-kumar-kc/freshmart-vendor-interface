@@ -122,7 +122,7 @@ export default function DisplayOrdersPage() {
     return (
       <>
         <td className="px-4 py-3 font-medium text-gray-700">
-          #{item.orderId.slice(0, 8)}
+          {item.orderId.slice(0, 8)}
         </td>
         <td className="px-4 py-3 text-gray-700">{item.email}</td>
         <td className="px-4 py-3 text-center">
@@ -174,7 +174,7 @@ export default function DisplayOrdersPage() {
               <DropdownMenuContent
                 align="end"
                 className={
-                  "rounded-sm bg-white shadow-lg px-3 py-2 flex flex-col gap-2"
+                  "rounded-md text-green-900 bg-green-50 shadow-sm hover:bg-green-100 w-[150px] text-center hover:text-gray-700 transition-colors  py-2 flex flex-col gap-2"
                 }
               >
                 {nextStatuses.map((next) => (
@@ -220,7 +220,7 @@ export default function DisplayOrdersPage() {
             value={search}
             onChange={(e) => handleFilterBySearchValue(e.target.value)}
             placeholder="Search by order ID or email"
-            className="w-full bg-white border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
+            className="w-full bg-green-50 border border-gray-200 rounded-lg pl-9 pr-3 py-2 text-sm outline-none  focus:border-green-700"
           />
         </div>
 

@@ -135,16 +135,19 @@ export default function QuotationDetailPage() {
           <Controller
             name={`variants.${idx}.price`}
             control={control}
-            render={({ field }) => (
-              <input
-                type="number"
-                step="any"
-                readOnly={quotation.status !== "request"}
-                {...field}
-                onChange={(e) => field.onChange(Number(e.target.value))}
-                className="w-32 ml-auto block text-right bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
-              />
-            )}
+            render={({ field }) => {
+              const isPending = quotation.status !== "request";
+              return (
+                <input
+                  type="number"
+                  step="any"
+                  readOnly={isPending}
+                  {...field}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
+                  className={`w-32 ml-auto block text-right bg-green-50 border border-gray-200 rounded-lg px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-green-700/30 focus:border-green-700 ${isPending && "bg-green-50"}`}
+                />
+              );
+            }}
           />
         </td>
       </>
