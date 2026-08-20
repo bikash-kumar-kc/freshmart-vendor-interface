@@ -18,6 +18,7 @@ export default function Home() {
           ease: "easeInOut",
         }}
         className="absolute inset-0 h-full w-full object-cover"
+        fetchPriority="high"
       />
 
       <div className="absolute inset-0 bg-black/50" />
@@ -102,17 +103,17 @@ export default function Home() {
             </Link>
 
             <Link to="/dashboard">
-            <motion.button
-              whileHover={{
-                scale: 1.05,
-              }}
-              whileTap={{
-                scale: 0.97,
-              }}
-              className="rounded-md bg-blue-600 px-8 py-3 text-base font-medium text-white backdrop-blur-sm hover:bg-blue-700"
-            >
-              View Dashboard
-            </motion.button>
+              <motion.button
+                whileHover={{
+                  scale: 1.05,
+                }}
+                whileTap={{
+                  scale: 0.97,
+                }}
+                className="rounded-md bg-blue-600 px-8 py-3 text-base font-medium text-white backdrop-blur-sm hover:bg-blue-700"
+              >
+                View Dashboard
+              </motion.button>
             </Link>
           </motion.div>
         </motion.div>
