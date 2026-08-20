@@ -6,10 +6,7 @@ import { cn } from "@/lib/utils";
 
 const Select = SelectPrimitive.Root;
 
-function SelectGroup({
-  className,
-  ...props
-}: SelectPrimitive.Group.Props) {
+function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return (
     <SelectPrimitive.Group
       data-slot="select-group"
@@ -19,10 +16,7 @@ function SelectGroup({
   );
 }
 
-function SelectValue({
-  className,
-  ...props
-}: SelectPrimitive.Value.Props) {
+function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
   return (
     <SelectPrimitive.Value
       data-slot="select-value"
@@ -62,7 +56,7 @@ function SelectTrigger({
         "[&_svg]:pointer-events-none",
         "[&_svg]:shrink-0",
         "[&_svg:not([class*='size-'])]:size-4",
-        className
+        className,
       )}
       {...props}
     >
@@ -79,17 +73,13 @@ function SelectContent({
   side = "bottom",
   sideOffset = 10,
   align = "center",
-  alignOffset = 0,
+  alignOffset = 20,
   alignItemWithTrigger = true,
   ...props
 }: SelectPrimitive.Popup.Props &
   Pick<
     SelectPrimitive.Positioner.Props,
-    | "align"
-    | "alignOffset"
-    | "side"
-    | "sideOffset"
-    | "alignItemWithTrigger"
+    "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger"
   >) {
   return (
     <SelectPrimitive.Portal>
@@ -99,7 +89,7 @@ function SelectContent({
         align={align}
         alignOffset={alignOffset}
         alignItemWithTrigger={alignItemWithTrigger}
-        className="isolate z-50"
+        className="isolate z-50 w-full md:w-[30%] mt-25 ml-10"
       >
         <SelectPrimitive.Popup
           data-slot="select-content"
@@ -111,10 +101,13 @@ function SelectContent({
             "overflow-x-hidden overflow-y-auto",
             "rounded-xl",
             "bg-gray-50",
+            // "mt-40",
+            "w-full",
+            // "h-0",
             "text-popover-foreground",
-            "border border-gray-300",
+            // "border border-gray-300",
             "shadow-md",
-            "ring-1 ring-foreground/10",
+            // "ring-1 ring-foreground/10",
             "duration-100",
             "data-[align-trigger=true]:animate-none",
             "data-[side=bottom]:slide-in-from-top-2",
@@ -129,7 +122,7 @@ function SelectContent({
             "data-closed:animate-out",
             "data-closed:fade-out-0",
             "data-closed:zoom-out-95",
-            className
+            className,
           )}
           {...props}
         >
@@ -147,10 +140,7 @@ function SelectLabel({
   return (
     <SelectPrimitive.GroupLabel
       data-slot="select-label"
-      className={cn(
-        "px-1.5 py-1 text-xs text-muted-foreground",
-        className
-      )}
+      className={cn("px-1.5 py-1 text-xs text-muted-foreground", className)}
       {...props}
     />
   );
@@ -177,7 +167,7 @@ function SelectItem({
         "*:[span]:last:flex",
         "*:[span]:last:items-center",
         "*:[span]:last:gap-2",
-        className
+        className,
       )}
       {...props}
     >
@@ -199,10 +189,7 @@ function SelectSeparator({
   return (
     <SelectPrimitive.Separator
       data-slot="select-separator"
-      className={cn(
-        "pointer-events-none mx-1 my-1 h-px bg-border",
-        className
-      )}
+      className={cn("pointer-events-none mx-1 my-1 h-px bg-border", className)}
       {...props}
     />
   );
@@ -219,7 +206,7 @@ function SelectScrollUpButton({
         "top-0 z-10 flex w-full cursor-default items-center justify-center",
         "bg-popover py-1",
         "[&_svg:not([class*='size-'])]:size-4",
-        className
+        className,
       )}
       {...props}
     >
@@ -239,7 +226,7 @@ function SelectScrollDownButton({
         "bottom-0 z-10 flex w-full cursor-default items-center justify-center",
         "bg-popover py-1",
         "[&_svg:not([class*='size-'])]:size-4",
-        className
+        className,
       )}
       {...props}
     >

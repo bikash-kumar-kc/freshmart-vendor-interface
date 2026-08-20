@@ -82,14 +82,28 @@ export default function Sidebar({ unreadCount = 0 }: { unreadCount?: number }) {
       showToast.success("Logout Successfully");
       navigate("/");
     } catch {
-
-
       showToast.error("Failed to LogIn");
     }
   };
 
   return (
-    <aside className="flex h-screen w-[15%] fixed flex-col justify-between border-r border-gray-100 shadow-lg bg-white px-4 py-5">
+    // <aside className="flex h-screen w-[30%] md:w-[15%] fixed flex-col justify-between border-r border-gray-100 shadow-lg bg-white px-4 py-5">
+    <aside
+      className="
+    fixed left-0 top-0 z-40
+    flex h-screen flex-col justify-between
+    border-r border-gray-100 bg-white shadow-lg
+    px-3 py-4
+
+    w-[50%]
+
+    md:w-64
+    lg:w-60
+    xl:w-64
+
+    transition-all duration-300
+  "
+    >
       <div>
         {/* Brand */}
         <div className="mb-8 flex items-center gap-3 px-2 w-full ">

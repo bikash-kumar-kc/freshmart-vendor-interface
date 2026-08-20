@@ -37,7 +37,7 @@ import { useUpdateProductListing } from "@/lib/tanstackquery/productlisting/useU
 import { showToast } from "@/components/ReactToast";
 
 const inputClass =
-  "w-full bg-white border border-slate-200 rounded-lg px-3 py-[11px] text-sm text-slate-800 outline-none focus:border-[#3B6D11] placeholder:text-slate-400";
+  "w-full  border border-slate-200 rounded-lg px-3 py-[11px] text-sm text-slate-800 outline-none focus:border-[#3B6D11] placeholder:text-slate-400 bg-gray-50";
 const errorInputClass =
   "w-full bg-white border border-rose-300 rounded-lg px-3 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-rose-500/20 placeholder:text-slate-400";
 const selectItemClass =
@@ -180,7 +180,6 @@ export default function AddProductPage() {
 
   const onSubmit = async (values: ProductListingFormValues) => {
     if (!user?.vendorId) {
-     
       showToast.error("Vendor session not found. Please log in again");
       return;
     }
@@ -218,7 +217,6 @@ export default function AddProductPage() {
           productListingId: productListingDetails.id,
         });
 
-      
         showToast.success("Success", "Product Details Updated Successfully ");
         setImages([]);
         navigate("/product-layout");
@@ -227,12 +225,10 @@ export default function AddProductPage() {
 
       await createProductListing.mutateAsync(requiredRequestObject);
 
-      
       showToast.success("success", "Product submitted for review.");
       setImages([]);
       navigate("/product-layout");
     } catch {
-      
       showToast.error("Failed to submit product on update products.");
     }
   };
@@ -286,13 +282,13 @@ export default function AddProductPage() {
         subtitle="List a product for your vendor catalog. Submissions go to admin for review before going live."
       />
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 ">
         <SectionCard
           step={1}
           title="Basic information"
           description="What the product is and how it's categorized."
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Field
               name="productId"
               label="Product"
@@ -313,7 +309,7 @@ export default function AddProductPage() {
                     searchPlaceholder="Search products..."
                     loading={productNamesLoading}
                     hasError={!!errors.productId}
-                    className=" text-base bg-gray-50 border-2 border-gray-300 rounded-md lg:w-100"
+                    className=" text-base bg-gray-50 border-2 border-gray-300 rounded-md w-full"
                     contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
                     initialValue={productListingDetails?.productId}
                   />
@@ -332,10 +328,9 @@ export default function AddProductPage() {
                   activeField={activeField}
                   setActiveField={setActiveField}
                 >
-                  
-                  <Select value={field.value} onValueChange={field.onChange}>
+                  <Select value={field.value} onValueChange={field.onChange} >
                     <SelectTrigger
-                      className="h-11 w-full lg:w-[280px] rounded-md border-2 border-gray-300 bg-gray-50 px-3.5 py-5 text-sm text-gray-800
+                      className="h-11 w-full  rounded-md border-2 border-gray-300 bg-gray-50 px-3.5 py-5 text-sm text-gray-800
       transition-colors hover:border-gray-400 data-[placeholder]:text-gray-400"
                     >
                       <SelectValue placeholder="Select listing type" />
@@ -343,8 +338,8 @@ export default function AddProductPage() {
 
                     <SelectContent
                       side="bottom"
-                      sideOffset={8}
-                      position="popper"
+                      sideOffset={20}
+                      // position="popper"
                       className="w-[--radix-select-trigger-width] rounded-sm border border-gray-200 bg-white p-1 shadow-lg"
                     >
                       <SelectItem value="inventory" className={selectItemClass}>
