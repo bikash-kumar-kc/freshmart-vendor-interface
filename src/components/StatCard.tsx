@@ -16,7 +16,7 @@ export default function StatCard({
   accent = "#3B6D11",
 }: StatCardProps) {
   return (
-    <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200 p-4 pl-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+    <div className="relative overflow-hidden bg-white rounded-2xl border border-slate-200 p-4 pl-5  hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 shadow-lg">
       <span
         className="absolute left-0 top-0 bottom-0 w-1"
         style={{ backgroundColor: accent }}

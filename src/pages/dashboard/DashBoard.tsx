@@ -82,7 +82,7 @@ export default function Dashboard() {
       </div>
 
       {/* Recent notifications */}
-      <div className="bg-white rounded-sm p-5 sm:p-6">
+      <div className="bg-white rounded-sm p-5 sm:p-6 shadow-lg ">
         <h2 className="text-lg font-semibold text-black mb-4">
           Recent Notifications
         </h2>
