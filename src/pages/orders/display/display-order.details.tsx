@@ -36,8 +36,10 @@ const columns: IColumn[] = [
   { id: "action", label: "Action", align: "center", width: "150px" },
 ];
 
-const formatCurrency = (value: number) =>
-  `Rs. ${value.toLocaleString("en-NP")}`;
+const formatCurrency = (value: number) => {
+  if (!value) return;
+  return `Rs. ${value.toLocaleString("en-NP")}`;
+};
 
 export default function OrderDetailsPage() {
   const { id } = useParams<{ id: string }>();
