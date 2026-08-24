@@ -37,7 +37,7 @@ import { useUpdateProductListing } from "@/lib/tanstackquery/productlisting/useU
 import { showToast } from "@/components/ReactToast";
 
 const inputClass =
-  "w-full  border border-slate-200 rounded-lg px-3 py-[11px] text-sm text-slate-800 outline-none focus:border-[#3B6D11] placeholder:text-slate-400 bg-green-50";
+  "w-full  border border-slate-200 rounded-lg px-3 py-[11px] text-sm text-slate-800 outline-none focus:border-[#3B6D11] placeholder:text-slate-400 bg-green-50 placeholder:text-[12px]";
 const errorInputClass =
   "w-full bg-white border border-rose-300 rounded-lg px-3 py-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-rose-500/20 placeholder:text-slate-400";
 const selectItemClass =
@@ -369,6 +369,7 @@ export default function AddProductPage() {
               <input
                 className={inputClass}
                 placeholder="e.g. Golbheda"
+
                 {...register("localName")}
               />
             </Field>
