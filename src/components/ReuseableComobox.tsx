@@ -67,6 +67,7 @@ export default function ReusableCombobox({
             hasError && "border-rose-300",
             !selected && "text-slate-400",
             className,
+            'text-[12px]!'
           )}
         >
           {loading ? "Loading..." : selected ? selected.label : placeholder}
@@ -84,7 +85,7 @@ export default function ReusableCombobox({
         <Command>
           <CommandInput
             placeholder={searchPlaceholder}
-            className="h-9 border-0"
+            className="h-9 border-0 placeholder:text-[12px]"
           />
           <CommandList className="scrollbar-green">
             <CommandEmpty>{emptyText}</CommandEmpty>

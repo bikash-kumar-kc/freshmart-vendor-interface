@@ -394,7 +394,7 @@ export default function AddProductPage() {
                     searchPlaceholder="Search categories..."
                     loading={categoriesLoading}
                     hasError={!!errors.categoryId}
-                    className=" text-base border-slate-200 rounded-md lg:w-100"
+                    className=" text-base border-slate-200 rounded-md lg:w-100 placeholder:text-[12px]"
                     contentClassName="bg-gray-50 border-gray-300 lg:w-[400px]"
                     initialValue={productListingDetails?.categoryId}
                   />
