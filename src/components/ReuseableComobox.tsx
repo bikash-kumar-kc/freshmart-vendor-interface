@@ -101,11 +101,8 @@ export default function ReusableCombobox({
                       setOpen(false);
                     }}
                     className={cn(
-                      isSelected && "!bg-green-900 !text-white",
-                      // value === item.id
-                      //   ? ""
-                      //   : "hover:bg-green-400 hover:text-white",
-                      // "mt-1",
+                      isSelected && "bg-green-900! text-white!",
+                      "hover:bg-green-400 hover:text-white",
                     )}
                   >
                     {item.label}
