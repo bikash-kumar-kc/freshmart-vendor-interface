@@ -111,7 +111,7 @@ const Login = () => {
                   Password
                 </label>
                 <Link
-                  to="/forgot-password"
+                  to="/requestforpasswordreset"
                   className="text-xs text-green-600 hover:text-green-700 transition-colors"
                 >
                   Forgot password?
