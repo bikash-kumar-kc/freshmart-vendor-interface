@@ -46,7 +46,6 @@ class AuthServices {
   // vendor verify otp...
   async verifyOtp(data: { email: string; otp: string }) {
     if (!data.email || !data.otp) {
-
       showToast.error("Data missing", "Email or otp is missing ");
     }
     return await api.post("/vendor/otp/verify", { ...data });
@@ -55,14 +54,25 @@ class AuthServices {
   // vendor ask for otp again...
   async resendOtp(data: { email: string }) {
     if (!data.email) {
-
-
       showToast.error("Data missing", "Email or otp is missing ");
     }
 
     return await api.post("/vendor/otp/resend", {
       ...data,
     });
+  }
+
+  // vendor reset password
+  async resetPassword(data: {
+    email: string;
+    token: string;
+    password: string;
+  }) {
+    return await api.post("/auth/reset-password", { ...data });
+  }
+
+  async requestPasswordReset(email: string) {
+    return await api.post("/auth/forgot-password", { email });
   }
 }
 
