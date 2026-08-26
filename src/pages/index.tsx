@@ -14,6 +14,8 @@ import OrderDetails from "./orders/OrderDetails";
 import QuotationDetials from "./quotations/QuotationDetials";
 import ProductsPage from "./products/ProductPage.layout";
 import DisplayOrdersPage from "./orders/display/display-order.details";
+import PasswordReset from "./auth/PasswordReset";
+import ReqeustForPasswordReset from "./auth/RequestForPasswordReset";
 
 export {
   Login,
@@ -32,4 +34,6 @@ export {
   QuotationDetials,
   ProductsPage,
   DisplayOrdersPage,
+  PasswordReset,
+  ReqeustForPasswordReset,
 };
