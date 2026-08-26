@@ -18,13 +18,14 @@ import {
   Signup,
   VendorRegistration,
   VerifyEmail,
+  PasswordReset,
+  ReqeustForPasswordReset,
 } from "./pages";
 
 import { AuthLayout, UnAuthLayout } from "./layout";
 import PublicRoutes from "./routes/PublicRoutes";
 import Home from "./pages/home/Home";
 import Profile from "./pages/profile/Profile";
-
 
 const authenticatedPages = [
   {
@@ -98,6 +99,14 @@ const unauthenticatedPages = [
   {
     component: <Login />,
     path: "/login",
+  },
+  {
+    component: <PasswordReset />,
+    path: "/passwordreset",
+  },
+  {
+    component: <ReqeustForPasswordReset />,
+    path: "/requestforpasswordreset",
   },
 ];
 
