@@ -34,7 +34,7 @@ const ReqeustForPasswordReset = () => {
       showToast.success("Request For Password Reset Successfully.");
       reset();
     } catch {
-      showToast.error("Failed to LogIn");
+      showToast.error("Failed to Password Reset Request");
     }
   };
 
@@ -51,7 +51,6 @@ const ReqeustForPasswordReset = () => {
                 </span>
               </div>
             </Link>
-            <p className="text-gray-400 text-sm">Sign in to your account</p>
           </div>
 
           <form
