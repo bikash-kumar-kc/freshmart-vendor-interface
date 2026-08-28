@@ -161,21 +161,20 @@ function VerifyEmailDialog({
       setResendCooldown(VENDOR_CONSTANT.RESEND_COOLDOWN_SECONDS);
       setOtp("");
       setVerifyEmail(false);
-      toast.add({ type: "success", title: "A new code has been sent" });
+      showToast.success("A new code has been sent");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 429) {
           setRateLimit(true);
-          toast.add({
-            type: "error",
-            title: "Rate limit hit",
-            description: "You have to wait a few minutes before trying again!",
-          });
+          showToast.error(
+            "Rate limit hit",
+            "You have to wait a few minutes before trying again!",
+          );
         }
         return;
       }
 
-      toast.add({ type: "error", description: "Failed to generate OTP" });
+      showToast.error("Failed to generate OTP");
     }
   }
 
