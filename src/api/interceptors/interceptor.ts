@@ -46,8 +46,6 @@ api.interceptors.response.use(
         refreshQueue = [];
         return api(originalRequest);
       } catch (refreshError) {
-      
-
         showToast.error("Session Expired", "Please log in again");
         window.location.href = "/login";
         refreshQueue.forEach(({ reject }) => reject(refreshError));
