@@ -48,7 +48,10 @@ const Login = () => {
     try {
       await vendorLogin(data);
       showToast.success("LogIn Successfully");
-    } catch {
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        if (error.message === "Network Error") return;
+      }
       showToast.error("Failed to LogIn");
     }
   };
