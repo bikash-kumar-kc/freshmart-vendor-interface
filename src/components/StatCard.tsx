@@ -22,7 +22,7 @@ export default function StatCard({
         style={{ backgroundColor: accent }}
       />
       <div className="flex items-start justify-between gap-2">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <p className="text-xs font-semibold uppercase tracking-wide text-black">
           {label}
         </p>
         <div
