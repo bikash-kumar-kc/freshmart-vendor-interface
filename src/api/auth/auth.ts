@@ -22,7 +22,14 @@ class AuthServices {
 
   // vendor login...
   async login(payload: ILoginPayload) {
-    const { data } = await api.post<ILoginResponse>("/auth/login", payload);
+    const refinedPayload = {
+      ...payload,
+      isVendor: true,
+    };
+    const { data } = await api.post<ILoginResponse>(
+      "/auth/login",
+      refinedPayload,
+    );
     return data;
   }
 
