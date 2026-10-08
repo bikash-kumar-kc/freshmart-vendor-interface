@@ -19,6 +19,7 @@ export const notificationMeta: Record<NotificationSubType, { icon: LucideIcon; l
   admin_filed_quotation: { icon: FileSpreadsheet, label: 'New Quotation', color: '#C8742A' },
   display_order_request: { icon: Truck, label: 'Display Order', color: '#3B6D11' },
   quotation_deleted: { icon: Trash2, label: 'Quotation Deleted', color: '#DC2626' },
+  stock_update_requested:{icon: MessageSquareText,label:'Stock Update Requested',color:'#3B6D11'}
 };
 
 const referenceRouteMap: Record<string, (id: string) => string> = {
