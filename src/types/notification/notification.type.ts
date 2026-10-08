@@ -11,7 +11,8 @@ export type NotificationSubType =
   | "product_rejected"
   | "admin_filed_quotation"
   | "display_order_request"
-  | "quotation_deleted";
+  | "quotation_deleted"
+  | "stock_update_requested";
 
 export interface INotification {
   id: number;
@@ -32,5 +33,3 @@ export type IVendorNotificationsResponse = INotification[];
 export interface IUnreadCountResponse {
   unreadCount: number;
 }
-
-
