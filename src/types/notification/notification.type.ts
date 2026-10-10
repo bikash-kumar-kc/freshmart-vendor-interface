@@ -12,6 +12,7 @@ export type NotificationSubType =
   | "admin_filed_quotation"
   | "display_order_request"
   | "quotation_deleted"
+  | "quotation_cancelled"
   | "stock_update_requested";
 
 export interface INotification {
