@@ -11,7 +11,7 @@ export interface IColumn {
 interface ReusableTableProps<T> {
   columns: IColumn[];
   data: T[];
-  renderRow: (item: T) => ReactNode;
+  renderRow: (item: T,idx:number) => ReactNode;
   renderExpanded?: (item: T) => ReactNode;
   loading?: boolean;
   emptyMessage?: string;
