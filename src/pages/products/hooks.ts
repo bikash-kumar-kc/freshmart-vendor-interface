@@ -1,7 +1,8 @@
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { type IProductListParams } from "./requiredUtilis";
+
 import productServices from "./service";
 import { QUERY_KEYS } from "@/lib/tanstackquery/setup/queryKeys";
+import type { IProductListParams } from "./requiredUtilis";
 
 export const useApprovedProducts = (params: IProductListParams) =>
   useQuery({
