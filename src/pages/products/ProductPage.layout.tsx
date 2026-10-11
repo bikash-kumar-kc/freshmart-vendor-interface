@@ -85,7 +85,8 @@ export default function ProductsPage() {
     setSearch("");
   };
 
-  const renderRow = (item: IProductListItem) => {
+  const renderRow = (item: IProductListItem,idx:number) => {
+    console.log(idx)
     return (
       <>
         <td className="px-4 py-3 text-center font-medium text-gray-700">
