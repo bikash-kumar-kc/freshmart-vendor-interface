@@ -24,8 +24,16 @@ export function Field({
   return (
     <Motion>
       <div
-        onFocus={() => setActiveField(name)}
-        onBlur={() => setActiveField(null)}
+        onFocus={() => {
+          if (setActiveField) {
+            setActiveField(name);
+          }
+        }}
+        onBlur={() => {
+          if (setActiveField) {
+            setActiveField(null);
+          }
+        }}
       >
         <label className="block text-sm font-medium text-slate-700 mb-1.5">
           {label}
