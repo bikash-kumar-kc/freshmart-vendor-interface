@@ -2,6 +2,7 @@
 import { api } from "../axios";
 import Cookies from "js-cookie";
 import { showToast } from "@/components/ReactToast";
+import type { ILoginResponse } from "@/types/auth/auth.type";
 
 // intercepting request to attach token
 api.interceptors.request.use((config) => {
@@ -27,7 +28,11 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/auth/refresh")
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           refreshQueue.push({
@@ -41,7 +46,12 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await api.post("/auth/refresh");
+        const response: ILoginResponse = await api.post("/auth/refresh");
+        Cookies.set("accessToken", response.accessToken, {
+          secure: true,
+          sameSite: "lax",
+          expires: 1 / 24,
+        });
         refreshQueue.forEach(({ resolve }) => resolve());
         refreshQueue = [];
         return api(originalRequest);
