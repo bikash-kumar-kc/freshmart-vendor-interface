@@ -1,5 +1,4 @@
-// import { toast } from "@/components/ui/toast";
-import type { ILoginResponse } from "@/types/auth/auth.type";
+
 import { api } from "../axios";
 import Cookies from "js-cookie";
 import { showToast } from "@/toast";
