@@ -2,6 +2,7 @@ import { showToast } from "@/components/ReactToast";
 import { useAuthContext } from "@/context/AuthContext";
 import useSignin from "@/lib/tanstackquery/queryHook/useSignIn";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Cookies from "js-cookie";
 import { Eye, EyeOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -46,7 +47,12 @@ const Login = () => {
 
   const handleSubmitHandler = async (data: ILoginType) => {
     try {
-      await vendorLogin(data);
+      const response = await vendorLogin(data);
+      Cookies.set("accessToken", response.accessToken, {
+        secure: true,
+        sameSite: "lax",
+        expires: 1 / 24,
+      });
       showToast.success("LogIn Successfully");
     } catch (error: unknown) {
       if (error instanceof Error) {
