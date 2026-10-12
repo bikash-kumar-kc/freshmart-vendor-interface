@@ -1,13 +1,17 @@
 // import { toast } from "@/components/ui/toast";
+import type { ILoginResponse } from "@/types/auth/auth.type";
 import { api } from "../axios";
 import Cookies from "js-cookie";
-import { showToast } from "@/components/ReactToast";
-import type { ILoginResponse } from "@/types/auth/auth.type";
+import { showToast } from "@/toast";
+// import { showToast } from "@/components/ReactToast";
+// import type { ILoginResponse } from "@/types/auth/auth.type";
 
 // intercepting request to attach token
 api.interceptors.request.use((config) => {
   const token = Cookies.get("accessToken");
+
   if (token) {
+    console.log(token);
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
@@ -46,12 +50,7 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response: ILoginResponse = await api.post("/auth/refresh");
-        Cookies.set("accessToken", response.accessToken, {
-          secure: true,
-          sameSite: "lax",
-          expires: 1 / 24,
-        });
+        await api.post("/auth/refresh");
         refreshQueue.forEach(({ resolve }) => resolve());
         refreshQueue = [];
         return api(originalRequest);

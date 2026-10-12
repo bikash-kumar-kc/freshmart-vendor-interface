@@ -26,10 +26,12 @@ class AuthServices {
       ...payload,
       isVendor: true,
     };
+    
     const { data } = await api.post<ILoginResponse>(
       "/auth/login",
       refinedPayload,
     );
+    console.log(data)
     return data;
   }
 
