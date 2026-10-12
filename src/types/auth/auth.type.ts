@@ -12,6 +12,7 @@ export interface ILoginPayload {
 
 export interface ILoginResponse {
   user: IAuthUser;
+  accessToken: string;
 }
 
 export interface ISetupAccountPayload {
